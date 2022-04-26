@@ -12,10 +12,9 @@ Clang-Tidy is modular and provides a convenient interface for writing new checks
 \subsection{System Requirements}
 
 Table 2.1 shows the system requirements and supported compilers for building
-LLVM. The checkers were developed with Ubuntu 20.04 and tested on Ubuntu 18.04,
-macOS, and WSL Ubuntu 20.04.
+LLVM. The checkers were developed with Ubuntu 20.04 and tested on Ubuntu 18.04, and WSL Ubuntu 20.04.
 \par Building and using LLVM's Clang-Tidy takes a lot of time on weaker computers. The minimum recommended memory size
-is 64 GB, the optimal amount is 128 GB or even 256 GB of memory. % continue with the recommendation  
+for building is 16 GB, the optimal amount is 64 GB of memory. % continue with the recommendation  
 
 \begin{table}[H]
 	\centering
@@ -58,13 +57,14 @@ is 64 GB, the optimal amount is 128 GB or even 256 GB of memory. % continue with
 	\label{tab:example-1}
 \end{table}
 
+Software requirements include (at least) GCC version 7.1.0, CMake version 3.13.4, Python version 3.6 and GNU Make version 3.79. % https://llvm.org/docs/GettingStarted.html#requirements
+
 \subsection{Building from source}
 
 These commands will compile LLVM from source. The building process with parameters can be found on the README.md of
 LLVM project Github repository, or the Getting Started page of Clang documentation. These are the commands I used for
-the compilation. % https://github.com/llvm/llvm-project#readme and https://clang.llvm.org/get_started.html
-% uselinker: gold vagy llv, utóbbit fel kell telepíteni; parallel link jobs és -j12 ninjánál a hány szálon futhat, plj magok számának 1/4-e ninja job szám meg magok-2
-% ezeket egy olyan gépen használtam ahol 32gb ram és 14 mag volt  
+the compilation. 
+% https://github.com/llvm/llvm-project#readme and https://clang.llvm.org/get_started.html
 
 \begin{lstlisting}[language={bash}]
 	# On windows, git clone --config core.autocrlf=false https://github.com/llvm/llvm-project.git
@@ -94,12 +94,76 @@ the compilation. % https://github.com/llvm/llvm-project#readme and https://clang
 	ninja -j12 clang-tidy llvm-symbolizer
 \end{lstlisting}
 
-\section{Running Clang-Tidy}
+Explanation for some flags: at \texttt{DLLVM\_USE\_LINKER} we can change the linker we are using, either Gold or LLD (Linker for LLVM). The
+latter needs to be installed. \texttt{DLLVM\_PARALLEL\_LINK\_JOBS} and -j at Ninja sets the CPU capacity. The recommended amount for
+\texttt{LINK\_JOBS} is one quarter of the amount of cores, and Ninja job amount should be cores - 2. I used these commands on a
+server with 32 GB memory and 14 CPU cores.
+
+
+\section{Running by Translation Units}
+
+You can give Clang-Tidy multiple translation units to run on, and it will give you diagnosis separately for each one. You run it by
+using \lstinline{clang-tidy -checks='-*,misc-discarded-return-value' -p ./Build a/main.cpp b/main.cpp},
+where the "checks" first disables all checkers with -*, then enables our checker, the flag "p" gets the build path and finally
+we give the paths to our code. Here we are getting two separate diagnoses for our two separate files or translation units.
+
+% output example from one of the code compass SINGLE runs
+
+\section{Multiple Phase Version}
 
 The updated infrastructure contains two new flags for running Clang-Tidy, multipass-phase and multipass-dir.
 Multipass-phase is an enum flag, that has three values, "collect", "compact" and "diagnose" with the latter as default.
 Multipass-dir needs a path to a directory where the checkers that support the collect feature can dump their collection datas
 that they are going to compact and use later.
+
+\subsection{Collect}
+
+Collect phase, as the name suggest, will have the checkers collect data on each translation unit and write them into unique yaml
+files to later reuse this data. This is how you normally run collect phase on the desired files:
+
+\begin{lstlisting}[language={bash}]
+	clang-tidy \
+	-checks='-*,misc-discarded-return-value' \
+	--multipass-phase=collect \
+	--multipass-dir='MyCollectionDirectory' \
+	-p ./Build \
+	a/main.cpp b/main.cpp
+\end{lstlisting}
+
+What Discarded Return Value checker (or DRV) does in this phase, is count the amount the declared non-void functions were called,
+and count the amount that these function's return values were checked. After finishing counting in one translation unit, it writes the
+collected numbers and function names into a yaml file as a struct.  
+\par After collecting, you do not get any diagnosis or output text, but the desired amount of (in this case 2) yaml files are going to
+be generated.
+
+% létrejött file mutatása
+
+\subsection{Compact}
+
+Compact phase will iterate through the collected data per checker and have the checkers read, use and compact all the data collected
+into one yaml file.
+
+\begin{lstlisting}[language={bash}]
+	clang-tidy \
+	-checks='-*,misc-discarded-return-value' \
+	--multipass-phase=compact \
+	--multipass-dir='MyCollectionDirectory' \
+	-p ./Build \
+	a/main.cpp b/main.cpp
+\end{lstlisting}
+
+DRV reads the data on each function back and constructs new data similar to the previous ones. If one function is called in multiple
+translation units, then it simply adds the numbers from the TU's yaml file to the new structure. After it is finished, the data is
+written into a single yaml file.
+\par This phase does not write anything on standard output either, but will construct the compacted yamls per checker.
+
+% létrejött file mutatása
+
+\subsection{Diagnose}
+
+For backwards compatibility, the default diagnose phase, if compact has not happened for a checker, will do exactly what the non-multiple
+phase Clang-Tidy did, give diagnosis 
+
 \begin{itemize}
 	\item Collect phase, as the name suggest, will have the checkers collect data on each translation unit and write them into yaml files.
 	\item Compact phase will have the checkers read, use and compact all the data collected into one yaml file.
@@ -112,34 +176,41 @@ that they are going to compact and use later.
 
 Here is an example of a project with two files (of the same name) in different folders, and how I run this from terminal.
 The original procedure of diagnosis would have been to simply write
-\lstinline{clang-tidy -checks='-*,misc-discarded-return-value' -p ./Build a/main.cpp b/main.cpp},
-where the "checks" first disables all checkers with -*, then enables our checker, the flag "p" gets the build path and finally
-we give the paths to our code. Here we would have gotten two separate diagnosis for our two separate files or translation units.
+
+
 Instead of this, we will have do it in different phases:
 
 \begin{lstlisting}[language={bash}]
 	# Pre-collection diagnosis (The phase and directory flags are unneeded in this scenario)
 	clang-tidy \
-	-checks='-*,misc-discarded-return-value' --multipass-phase=diagnose \
-	--multipass-dir='MyCollectionDirectory' -p ./Build \
+	-checks='-*,misc-discarded-return-value' \
+	--multipass-phase=diagnose \
+	--multipass-dir='MyCollectionDirectory' \
+	-p ./Build \
 	a/main.cpp b/main.cpp
 
 	# Collection phase
 	clang-tidy \
-	-checks='-*,misc-discarded-return-value' --multipass-phase=collect \
-	--multipass-dir='MyCollectionDirectory' -p ./Build \
+	-checks='-*,misc-discarded-return-value' \
+	--multipass-phase=collect \
+	--multipass-dir='MyCollectionDirectory' \
+	-p ./Build \
 	a/main.cpp b/main.cpp
 
 	# Compact phase
 	clang-tidy \
-	-checks='-*,misc-discarded-return-value' --multipass-phase=compact \
-	--multipass-dir='MyCollectionDirectory' -p ./Build \
+	-checks='-*,misc-discarded-return-value' \
+	--multipass-phase=compact \
+	--multipass-dir='MyCollectionDirectory' \
+	-p ./Build \
 	a/main.cpp b/main.cpp
 
 	# Diagnosis with project level knowledge
 	clang-tidy \
-	-checks='-*,misc-discarded-return-value' --multipass-phase=diagnose \
-	--multipass-dir='MyCollectionDirectory' -p ./Build \
+	-checks='-*,misc-discarded-return-value' \
+	--multipass-phase=diagnose \
+	--multipass-dir='MyCollectionDirectory' \
+	-p ./Build \
 	a/main.cpp b/main.cpp
 \end{lstlisting}
 
