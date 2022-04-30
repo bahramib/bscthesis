@@ -115,10 +115,17 @@ available.
 To prove the usability of the solution, a new safety and security related check, currently not provided by Clang-Tidy, will be developed
 utilizing the new infrastructure created in this work.
 In the end, the results of the thesis will allow the international community behind LLVM to develop and make available a wider potential of
-checks.
-% tervezzük berakni az llvmbe + 3 db cite
+checks, as we are planning to upstream the entire project into LLVM. \cite{upstream1} \cite{upstream2} \cite{upstream3}
+
+\section{Related Works}
+
+The topic of cross translation unit analysis shares other different solutions and implementations as well, one great example is
+Clang CTU \cite{clangCTU}.
+As previously stated, the infrastructure enhancement follows the philosophy of MapReduce \cite{mapreduce}.
+There exists a static analysis rule in Coverity Scan static analysis tool, that is similar to our checker \cite{coverity}.
+
 
 \section{Thesis layout}
 
-After the Introduction, in \cref{ch:user}, User Guide will have instructions on how to download, compile and set up the static analysis tool, and
-how to run it on a C++ project. The Developer Guide will explain how the checker, and the infrastructure itself works, in detail.
+After the Introduction, in \cref{ch:user}, the User Guide will have instructions on how to download, compile and set up the static analysis tool, and
+how to run it on a C++ project. In \cref{ch:impl}, the Developer Guide will explain how the checker, and the infrastructure itself works, in detail.
