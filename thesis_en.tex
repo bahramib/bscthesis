@@ -10,9 +10,12 @@
 % The minted package is also supported for source highlighting
 % See minted-intregration.tex for example
 \usepackage[newfloat]{minted}
-
+\usepackage{pifont}
 \usepackage{cleveref}
+\usepackage{graphicx}
 %\usepackage{minted}
+\def\CC{{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
+%\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
 
 % Document's metadata
 \title{Enhancing pattern matching-based static analysis of C-family software
@@ -25,7 +28,7 @@ projects with project-level knowledge} % title
 
 % Superivsor(s)' metadata
 \supervisor{Richárd Szalay} % internal supervisor's name
-\affiliation{Ph.D.\ student} % internal supervisor's affiliation
+\affiliation{Ph.D.\ Student} % internal supervisor's affiliation
 %\extsupervisor{Jane Doe} % external supervisor's name
 %\extaffiliation{Senior Developer} % external supervisor's affiliation
 

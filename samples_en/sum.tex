@@ -1,6 +1,33 @@
 \chapter{Conclusion}
 \label{ch:sum}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu egestas mauris. Quisque nisl elit, varius in erat eu, dictum commodo lorem. Sed commodo libero et sem laoreet consectetur. Fusce ligula arcu, vestibulum et sodales vel, venenatis at velit. Aliquam erat volutpat. Proin condimentum accumsan velit id hendrerit. Cras egestas arcu quis felis placerat, ut sodales velit malesuada. Maecenas et turpis eu turpis placerat euismod. Maecenas a urna viverra, scelerisque nibh ut, malesuada ex.
+This thesis demonstrated the problem of unchecked return values, to which problem it gave a solution in form of a statistical method without
+actually modifying the source code of said unchecked return values. This solution was made as an implementation in the Clang-Tidy pattern
+matching based static analysis library, however the statistical method would fail because of the way Clang-Tidy checkers work, separately
+for each translation unit. This leads to false statistics. In order to fix this, I have enhanched the infrastructure and created the
+option of multiphase analysis, that will collect the needed information per translation unit, accumulate these and make a project level set
+of information, and finally give diagnosis with this newly compacted information. The finished checker was accomplished using this new
+infrastructure. This checker method can obviously run without the use of multiphase analysis, because the new infrastructure is made to be
+backwards compatible with the single phase mode, but the new infrastructure was vital for the statistics of the checker. This proved the
+checker to be an excellent example for the usage and utility of the multiphase mode.
 
-Aliquam suscipit dignissim tempor. Praesent tortor libero, feugiat et tellus porttitor, malesuada eleifend felis. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam eleifend imperdiet lorem, sit amet imperdiet metus pellentesque vitae. Donec nec ligula urna. Aliquam bibendum tempor diam, sed lacinia eros dapibus id. Donec sed vehicula turpis. Aliquam hendrerit sed nulla vitae convallis. Etiam libero quam, pharetra ac est nec, sodales placerat augue. Praesent eu consequat purus.
+\section{Future Works}
+
+Previously in \cref{sec:eval} I talked about ignoring a set of functions whose total amount of calls do not exceed a given value. This could
+potentially be implemented into the checker as an option, so that the user could give the checker the number, and the checker will not give
+warnings to a function call if the function's amount of calls is less than said number. It would make the diagnosis clearer in some cases.
+
+The first possible future work ignores functions based on their statistics, but ignoring based on function property could be useful too.
+The checker should chategorically ignore some functions. There are also functions whose return value can not be always checked. A classic
+example would be the \lstinline{<<} operator or \lstinline{std::append}, since the first will always return the \texttt{stream}, and the latter
+will always return \lstinline{*this} for continuous use of the same function. \lstinline{std::cout << '1 ' << '2 ' << '3' << std::endl;} will
+always be unchecked in the end, since the last \lstinline{<<} can not be checked (with merit) without creating another unchecked return value.
+
+The hash generation for the YAML filename does not respect multiple compilations of the same file with different compile flags. This is something
+that could be fixed in the future as well.
+
+\section*{Acknowledgements}
+
+I would like to express my deepest appreciation to my supervisor, Richárd Szalay for his invaluable patience and feedback, and without whom
+I could not have completed this thesis in time. I am also greatful to my professor, Dr. Zoltán Porkoláb, who generously provided his knowledge,
+expertise and inspiration.

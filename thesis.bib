@@ -3,11 +3,6 @@
 	url = {https://en.cppreference.com/w/cpp/language/attributes/nodiscard},
 }
 
-@manual{codechecker,
-	title = {CodeChecker},
-	url = {https://github.com/Ericsson/codechecker},
-}
-
 @inproceedings{mapreduce,
 	title	= {MapReduce: Simplified Data Processing on Large Clusters},
 	author	= {Jeffrey Dean and Sanjay Ghemawat},
@@ -50,6 +45,208 @@
   howpublished = {Revision on Phabricator for review},
   year         = {2022},
 }
+
+@book{kandr,
+author = {Kernighan, Brian W. and Ritchie, Dennis M.},
+title = {The C Programming Language},
+year = {1988},
+isbn = {0131103709},
+publisher = {Prentice Hall Professional Technical Reference},
+edition = {2nd},
+}
+
+@article{statcompare,
+author = {Lenarduzzi, Valentina and Lujan, Savanna and Saarimäki, Nyyti and Palomba, Fabio},
+year = {2021},
+title = {A Critical Comparison on Six Static Analysis Tools: Detection, Agreement, and Precision},
+url = {https://doi.org/10.48550/arXiv.2101.08832},
+}
+
+@article{selectiondef,
+author = {Rice, Andrew and Aftandilian, Edward and Jaspan, Ciera and Johnston, Emily and Pradel, Michael and Arroyo-Paredes, Yulissa},
+title = {Detecting Argument Selection Defects},
+year = {2017},
+issue_date = {October 2017},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {1},
+number = {OOPSLA},
+url = {https://doi.org/10.1145/3133928},
+doi = {10.1145/3133928},
+journal = {Proc. ACM Program. Lang.},
+month = {oct},
+articleno = {104},
+numpages = {22},
+keywords = {empirical study, method arguments, name-based program analysis, static analysis}
+}
+
+@manual{matcherref,
+  title  = {AST Matcher Reference},
+  url = {https://clang.llvm.org/docs/LibASTMatchersReference.html},
+}
+
+@article{googlearticle,
+author = {Rice, Andrew and Aftandilian, Edward and Jaspan, Ciera and Johnston, Emily and Pradel, Michael and Arroyo-Paredes, Yulissa},
+title = {Detecting Argument Selection Defects},
+year = {2017},
+issue_date = {October 2017},
+publisher = {Association for Computing Machinery},
+address = {New York, NY, USA},
+volume = {1},
+number = {OOPSLA},
+url = {https://doi.org/10.1145/3133928},
+doi = {10.1145/3133928},
+abstract = { Identifier names are often used by developers to convey additional information about the meaning of a program over and above the semantics of the programming language itself. We present an algorithm that uses this information to detect argument selection defects, in which the programmer has chosen the wrong argument to a method call in Java programs. We evaluate our algorithm at Google on 200 million lines of internal code and 10 million lines of predominantly open-source external code and find defects even in large, mature projects such as OpenJDK, ASM, and the MySQL JDBC. The precision and recall of the algorithm vary depending on a sensitivity threshold. Higher thresholds increase precision, giving a true positive rate of 85%, reporting 459 true positives and 78 false positives. Lower thresholds increase recall but lower the true positive rate, reporting 2,060 true positives and 1,207 false positives. We show that this is an order of magnitude improvement on previous approaches. By analyzing the defects found, we are able to quantify best practice advice for API design and show that the probability of an argument selection defect increases markedly when methods have more than five arguments. },
+journal = {Proc. ACM Program. Lang.},
+month = {oct},
+articleno = {104},
+numpages = {22},
+keywords = {name-based program analysis, static analysis, empirical study, method arguments}
+}
+
+@misc{memcached,
+  title = {memcached},
+  tag = {1.6.8},
+  url = {https://github.com/memcached/memcached.git},
+}
+
+@misc{tmux,
+  title = {tmux},
+  tag = {2.6},
+  url = {https://github.com/tmux/tmux.git},
+}
+
+@misc{curl,
+  title = {curl},
+  tag = {curl-7_66_0},
+  url = {https://github.com/curl/curl.git},
+}
+
+@misc{twin,
+  title = {twin},
+  tag = {v0.8.1},
+  url = {https://github.com/cosmos72/twin.git},
+}
+
+@misc{redis,
+  title = {redis},
+  tag = {6.2.6},
+  url = {https://github.com/antirez/redis.git},
+}
+
+@misc{vim,
+  title = {vim},
+  tag = {v8.2.1920},
+  url = {https://github.com/vim/vim.git},
+}
+
+@misc{openssl,
+  title = {openssl},
+  tag = {openssl-3.0.0-alpha7},
+  url = {https://github.com/openssl/openssl.git},
+}
+
+@misc{sqlite,
+  title = {sqlite},
+  tag = {version-3.33.0},
+  url = {https://github.com/sqlite/sqlite.git},
+}
+
+@misc{ffmpeg,
+  title = {ffmpeg},
+  tag = {n4.3.1},
+  url = {https://github.com/FFmpeg/FFmpeg.git},
+}
+
+@misc{postgres,
+  title = {postgres},
+  tag = {REL_13_0},
+  url = {https://github.com/postgres/postgres.git},
+}
+
+@misc{tinyxml2,
+  title = {tinyxml2},
+  tag = {8.0.0},
+  url = {https://github.com/leethomason/tinyxml2.git},
+}
+
+@misc{libwebm,
+  title = {libwebm},
+  tag = {libwebm-1.0.0.27},
+  url = {https://github.com/webmproject/libwebm.git},
+}
+
+@misc{xerces,
+  title = {xerces},
+  tag = {v3.2.3},
+  url = {https://github.com/apache/xerces-c.git},
+}
+
+@misc{bitcoin,
+  title = {bitcoin},
+  tag = {v0.20.1},
+  url = {https://github.com/bitcoin/bitcoin.git},
+}
+
+@misc{protobuf,
+  title = {protobuf},
+  tag = {v3.13.0-CSA-patched},
+  url = {https://github.com/steakhal/protobuf.git},
+}
+
+@misc{llvm,
+  title = {llvm-project},
+  tag = {llvmorg-12.0.0},
+  url = {https://github.com/llvm/llvm-project.git},
+}
+
+@misc{qtbase,
+  title = {qtbase},
+  tag = {v6.2.0},
+  url = {https://github.com/qt/qtbase.git},
+}
+
+@misc{mongo,
+  title = {mongo},
+  tag = {r4.4.6},
+  url = {https://github.com/mongodb/mongo.git},
+}
+
+@misc{codechecker,
+  title = {codechecker},
+  tag = {v6.17.0},
+  url = {https://github.com/Ericsson/codechecker.git},
+}
+
+@misc{contour,
+  title = {contour},
+  tag = {v0.2.0.173},
+  url = {https://github.com/contour-terminal/contour.git},
+}
+
+@inproceedings{typemig,
+title	= {Incremental Type Migration Using Type Algebra},
+author	= {Hyrum Wright},
+year	= {2020}
+}
+
+@inproceedings{autorefact,
+title	= {Large-Scale Automated Refactoring Using ClangMR},
+author	= {Hyrum Wright and Daniel Jasper and Manuel Klimek and Chandler Carruth and Zhanyong Wan},
+year	= {2013},
+booktitle	= {Proceedings of the 29th International Conference on Software Maintenance}
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 @book{dahl1972structured,
