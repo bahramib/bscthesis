@@ -1,8 +1,8 @@
 \chapter{User documentation}
 \label{ch:user}
 
-Both the changes in the Clang-Tidy infrastructure and our new checker obviously focuses heavily on LLVM's Clang-Tidy.
-Clang-Tidy is a clang-based \CC{} “linter” tool. Its purpose is to provide an extensible framework for diagnosing and fixing
+Both the changes in the Clang-Tidy infrastructure and our new checker focuses heavily on LLVM's Clang-Tidy.
+Clang-Tidy is a Clang-based \CC{} “linter” tool. Its purpose is to provide an extensible framework for diagnosing and fixing
 typical programming errors, like style violations, interface misuse, or bugs that can be deduced via static analysis.
 Clang-Tidy is modular and provides a convenient interface for writing new checks. % https://clang.llvm.org/extra/clang-tidy/
 
@@ -16,7 +16,7 @@ Table 2.1 shows the system requirements and supported compilers for building
 LLVM. The checkers were developed with Ubuntu 20.04 and tested on Ubuntu 18.04, and WSL Ubuntu 20.04.
 
 Building and using LLVM's Clang-Tidy takes a lot of time on weaker computers. The minimum recommended memory size
-for building is 16 GB, the optimal amount is 64 GB of memory. % continue with the recommendation  
+for building is 16 GiB, and the optimal amount is 64 GiB of memory. % continue with the recommendation  
 
 \begin{table}[H]
 	\centering
@@ -56,7 +56,7 @@ for building is 16 GB, the optimal amount is 64 GB of memory. % continue with th
 		\hline
 	\end{tabular}
 	\caption{System requirements and supported compilers for building LLVM.}
-	\label{tab:clang req}
+	\label{tab:clang-req}
 \end{table}
 
 Software requirements include (at least) GCC version 7.1.0, CMake version 3.13.4, Python version 3.6 and GNU Make version 3.79.
@@ -64,7 +64,7 @@ Software requirements include (at least) GCC version 7.1.0, CMake version 3.13.4
 \subsection{Building from source}
 
 These commands will compile LLVM from source. The building process with parameters can be found on the README.md of
-LLVM project Github repository\footnote{\url{https://github.com/llvm/llvm-project#readme}, accessed 2022. 05. 03.}, or the Getting
+LLVM project Github repository,\footnote{\url{https://github.com/llvm/llvm-project#readme} accessed 2022. 05. 03.}, or the Getting
 Started\footnote{\url{https://clang.llvm.org/get_started.html}, accessed 2022. 05. 03.} page of Clang documentation. These are the commands I used for
 the compilation.
 % https://github.com/llvm/llvm-project#readme and https://clang.llvm.org/get_started.html
@@ -97,20 +97,23 @@ the compilation.
 \end{lstlisting}
 
 Explanation for some flags: at \texttt{DLLVM\_USE\_LINKER} we can change the linker we are using, either Gold or LLD (Linker for LLVM). The
-latter needs to be installed. \texttt{DLLVM\_PARALLEL\_LINK\_JOBS} and -j at Ninja sets the CPU capacity. The recommended amount for
+latter needs to be installed. \texttt{DLLVM\_PARALLEL\_LINK\_JOBS} and \texttt{-j} at Ninja sets the CPU capacity. The recommended amount for
 \texttt{LINK\_JOBS} is one quarter of the amount of cores, and Ninja job amount should be $cores - 2$. I used these commands on a
 server with 32 GB memory and 14 CPU cores.
 
 
 \section{Running by Translation Units}
-\label{by TU}
+\label{by-TU}
 
-You can give Clang-Tidy multiple translation units to run on, and it will give you diagnosis separately for each one. You run it by
+The user can give Clang-Tidy multiple translation units to run on, and it will emit diagnostics separately for each one. You run it by
 using \lstinline{clang-tidy -checks='-*,misc-discarded-return-value' -p ./Build a/main.cpp b/main.cpp},
-where the "checks" first disables all checkers with -*, then enables our checker, the flag "p" gets the build path and finally
-we give the paths to our code. Here we are getting two separate diagnoses for our two separate files or translation units.
+where the "checks" first disables all checkers with -*, then enables our checker, the \texttt{-p} flag gets the build path that reads a
+compile command database, and finally we give the paths to the paths of our source files~\cite{flags}. Here we are getting two separate diagnostics
+for our two separate files or translation units.
 
-\begin{lstlisting}[caption={Diagnosis output without project level knowledge.},captionpos=b]
+\begin{lstlisting}[caption={Diagnostic output without project-level knowledge.},captionpos=b]
+	bahramib@cc:~/MyFolder/TestFolder$ clang-tidy -checks='-*,misc-discarded-return-value' -p ./Build a/main.cpp b/main.cpp
+
 	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: \
 	warning: return value of 'maybe_check_this' is used \
 	in most calls, but not in this one [misc-discarded-return-value]
@@ -124,30 +127,30 @@ we give the paths to our code. Here we are getting two separate diagnoses for ou
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{images/codechecker_first_ss_mongo_single_50.png}
-	\caption{A report of the diagnosis of MongoDB's source on CodeChecker with 50\% treshold on a single TU.}
+	\caption{A report of the diagnostics of MongoDB's source on CodeChecker with 50\% threshold on a single TU.}
 	\label{fig:mongo50single}
 \end{figure}
 
-Clang-Tidy is supported by CodeChecker. \cite{codechecker}
+Clang-Tidy is supported by CodeChecker.~\cite{codechecker}
 
-\subsection{Configuring Treshold}
+\subsection{Configuring Threshold}
 
 As previously descussed, the ratio of the amount of checked function calls and all the function calls is very important for the
 diagnosis, since we do not necessarily want to be notified of all the unused calls, but let us say if a function's return value
 is used in at least 65\% of all calls, we might want to be warned about the missing unchecked 35\%.
 
-The checker has an option for this called the \texttt{treshold}, that is the percentage above which we would like to be warned,
+The checker has an option for this called the \texttt{ConsumeThreshold}, that is the percentage above which we would like to be warned,
 but not under.
-You can configure the treshold, and any Clang-Tidy checker option with Tidy's \lstinline{-config} flag. Here you will have to type
-the name of the checker and its option member, with the desired value as a \texttt{key-value pair}. This is how it looks with 50\%:
+You can configure \texttt{ConsumeThreshold}, and any Clang-Tidy checker option with Tidy's \lstinline{-config} flag. Here you will have to type
+the name of the checker and its option member, with the desired value as a \emph{key-value pair}. This is how it looks with 50\%:
 \lstinline!-config='{CheckOptions: [{key: misc-discarded-return-value.ConsumeThreshold, value: 50}]}'!. With this option the full
 command looks like this:
 \lstinline!clang-tidy -checks='-*,misc-discarded-return-value'-config='{CheckOptions: [{key: misc-discarded-return-value.ConsumeThreshold, value: 50}]}' -p ./Build a/main.cpp b/main.cpp!.
 
 \subsection{Supressing Warnings}
 
-Let us review what is wrong with our code in \cref{unsuppressed}. In function foo, we forget to use our parameter p, and we do not
-check the return value when calling foo. These triggers one warning for each mistake as seen in listing \cref{fig:compiler warning}.
+Let us review what is wrong with our code in \cref{unsuppressed}. In function \texttt{foo}, we forget to use our parameter \texttt{p}, and we do not
+check the return value when calling \texttt{foo}. These triggers one warning for each mistake as seen in \cref{fig:compiler-warning}.
 \begin{lstlisting}[language={C++},caption={An example of both unused parameter and ignored return value with nodiscard.},label={unsuppressed}]
 [[nodiscard]] int foo(int p) {
   return 1;
@@ -160,12 +163,12 @@ int main(int argc, char**) {
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{images/nodiscard_warning.png}
 	\caption{The compiler warnings.}
-	\label{fig:compiler warning}
+	\label{fig:compiler-warning}
 \end{figure}
 
 If we do not want to fix these issues, but rather silence our warnings, we can simply write \lstinline{(void)} before the call
-to cast it into \lstinline{void} and trick the compiler into thinking that we did check the return value.
-Similarly, we could cast our parameter p into void as a distinct statement to make it seem like we used it. On code \cref{suppressed}
+to cast it to \lstinline{void} and trick the compiler into thinking that we did check the return value.
+Similarly, we could cast our parameter \texttt{p} to \lstinline{void} as a distinct statement to make it seem like we used it. On \cref{suppressed}
 we can see the suppressed version that does not yield warnings.
 
 \begin{lstlisting}[language={C++},caption={The same example, now with suppressed warnings.},label={suppressed}]
@@ -178,18 +181,11 @@ int main(int argc, char**) {
 }
 \end{lstlisting}
 
-The suppression of our new checker warnings follows the exact same convention. Casting into void acts as usage of the return
+The suppression of our new checker warnings follows the exact same convention. Casting to \lstinline{void} acts as usage of the return
 value and thus will not give warnings, despite not actually checking it.
 
-
-
-
-
-
-
-
 Both the philosophy and practice of silencing a single case of an unchecked function call is essentially the same as silencing the
-warning of \texttt{[[nodiscard]]} or an unused parameter. Simply write \lstinline{(void)} before the call, to cast it into void,
+warning of \texttt{[[nodiscard]]} or an unused parameter. By simply writing \lstinline{(void)} before the call, to cast it to void,
 tricking the compiler and the checker into thinking it is used, but not affecting anything in reality.
 If we got a warning on the line \lstinline{foo();}, from the checker or \texttt{[[nodiscard]]}, we will get neither if we change it
 to \lstinline{(void)foo();}.
@@ -197,15 +193,15 @@ to \lstinline{(void)foo();}.
 \section{Multiple Phase Version}
 
 The updated infrastructure contains two new flags for running Clang-Tidy, \texttt{multipass-phase} and \texttt{multipass-dir}.
-\texttt{Multipass-phase} is an \lstinline{enum} flag, that has three values, \texttt{"collect", "compact"} and \texttt{"diagnose"}
+\texttt{multipass-phase} is an \lstinline{enum} flag, that has three values, \texttt{"collect", "compact"} and \texttt{"diagnose"}
 with the latter as default.
-\texttt{Multipass-dir} needs a path to a directory where the checkers that support the collect feature can dump their collection datas
+\texttt{multipass-dir} needs a path to a directory where the checkers that support the collect feature can dump their collection data
 that they are going to compact and use later.
 
 
 \subsection{Collect}
 
-Collect phase, as the name suggest, will have the checkers collect data on each translation unit and write them into unique YAML
+The Collect phase, as the name suggest, will have the checkers collect data on each translation unit and write them into unique YAML
 files to later reuse this data. This is how you normally run collect phase on the desired files:
 
 \begin{lstlisting}[language={bash}]
@@ -217,11 +213,10 @@ files to later reuse this data. This is how you normally run collect phase on th
 	a/main.cpp b/main.cpp
 \end{lstlisting}
 
-What Discarded Return Value checker does in this phase, is count the amount the declared non-void functions were called,
+What the Discarded Return Value checker does in this phase is count the amount the declared non-void functions were called,
 and count the amount that these function's return values were checked. After finishing counting in one translation unit, it writes the
-collected numbers and function names into a YAML file as a struct.  
-\par After collecting, you do not get any diagnosis or output text, but the desired amount of (in this case 2) YAML files are going to
-be generated.
+collected numbers and function names into a YAML file.  
+\par After collecting, you do not get any diagnostics or output text, but the desired amount of (in this case 2) YAML files are generated.
 
 \begin{lstlisting}[caption={The YAML files containing the collection data.},captionpos=b]
 bahramib@cc:~/MyFolder/TestFolder/MyCollectionDirectory$ ll
@@ -253,8 +248,8 @@ total 8
 
 \subsection{Compact}
 
-Compact phase will iterate through the collected data per checker and have the checkers read, use and compact all the data collected
-into one YAML file. Flags aside from checks, multipass-phase and multipass-dir have no effect.
+The Compact phase will iterate through the collected data per checker and have the checkers read, use and compact all the data collected
+into one YAML file. Flags aside from \texttt{checks}, \texttt{multipass-phase} and \texttt{multipass-dir} have no effect.
 
 \begin{lstlisting}[language={bash}]
 	clang-tidy \
@@ -264,7 +259,7 @@ into one YAML file. Flags aside from checks, multipass-phase and multipass-dir h
 \end{lstlisting}
 
 This checker reads the data on each function back and constructs new data similar to the previous ones. If one function is called in multiple
-translation units, then it simply adds the numbers from the TU's YAML file to the new structure. After it is finished, the data is
+translation units, then it adds the numbers from the TU's YAML file to the new structure. After it is finished, the data is
 written into a single YAML file.
 \par This phase does not write anything on standard output either, but will construct the compacted YAMLs per checker.
 
@@ -276,7 +271,7 @@ written into a single YAML file.
 	-rw-r--r-- 1 bahramib bahramib 196 Apr 30 13:06 misc-discarded-return-value.yaml
 \end{lstlisting}
 
-\begin{lstlisting}[caption={Contents of the compacted file.},captionpos=b]
+\begin{lstlisting}[caption={Contents of the compacted file: the grouped sum of the input.},captionpos=b]
 	---
 	- ID:              'c:@S@MyClass@F@check_that#S'
 	  Consumed:        4
@@ -289,10 +284,10 @@ written into a single YAML file.
 
 \subsection{Diagnose}
 
-For backwards compatibility, the default diagnose phase, will do exactly what the non-multiple
-phase Clang-Tidy did, give diagnoses for each translation unit separately, as demonstrated in section \cref{by TU},
-if compact has not happened for a checker. Otherwise that checker will read and use the data compacted
-in the respective YAML file, and give its diagnosis calculated with project level knowledge.
+For backwards compatibility, the default diagnose phase will do exactly what the non-multiple
+phase Clang-Tidy did. It gives diagnostics for each translation unit separately, as demonstrated in \cref{by-TU},
+if compact has not been performed for a checker. Otherwise that checker will read and use the data compacted
+in the respective YAML file, and give its diagnostics calculated with project-level knowledge.
 
 \begin{lstlisting}[language={bash}]
 	clang-tidy \
@@ -303,14 +298,14 @@ in the respective YAML file, and give its diagnosis calculated with project leve
 	a/main.cpp b/main.cpp
 \end{lstlisting}
 
-My checker reads in the compacted data with the call and check amounts for each function and simply desides
-if diagnosis is needed or not for each unchecked return value in the current translation unit.
-The output is obviously the diagnosis.
+My checker reads in the compacted data with the call and check amounts for each function and simply decides
+if diagnostics are needed or not for each unchecked return value in the current translation unit.
+The output is the diagnostics.
 
-\begin{lstlisting}[caption={Diagnosis output with project level knowledge.},captionpos=b]
+\begin{lstlisting}[caption={Diagnostic output with project-level knowledge.},captionpos=b]
 	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: \
 	warning: return value of 'check_that' is used \
-	in most calls, but noti in this one [misc-discarded-return-value]
+	in most calls, but not in this one [misc-discarded-return-value]
 	MyClass::check_that();
 		^
 	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: note: \
@@ -329,18 +324,18 @@ The output is obviously the diagnosis.
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{images/codechecker_first_ss_mongo_multi_50.png}
-	\caption{A report of the diagnosis of MongoDB's source on CodeChecker with 50\% treshold and project level knowledge.}
+	\caption{A report of the diagnostics of MongoDB's source on CodeChecker with 50\% threshold and project-level knowledge.}
 	\label{fig:mongo50multi}
 \end{figure}
 
-We can clearly conclude, that the multipass diagnosis resulted in different warnings. Figure \cref{fig:mongo50multi}
-differs from \cref{fig:mongo50single} in only the percentage, but with a different treshold that could lead to different
-results, to either false positives, or hidden true positives. Our own example, however shows both, since we had a call
-that used to give warning when diagnosed separately which with project level knowledge does not, and one that did not give
-any warnings, but now it gives two, because it passed the treshold.
+We can clearly conclude, that the multipass diagnosis resulted in different warnings. \Cref{fig:mongo50multi}
+differs from \cref{fig:mongo50single} in only the percentage, but with a different threshold that could lead to different
+results, to either false positives, or false negatives. Our own example, however shows both, since we had a call
+that used to give warning when diagnosed separately which with project-level knowledge does not, and one that did not give
+any warnings, but now it gives two, because it passed the threshold.
 
-In \cref{lst:motivation example} we talked about our code getting no warnings without project level knowledge.
-After phases collect and compact, however our diagnosis will result in the following:
+In \cref{lst:motivation-example} we talked about our code getting no warnings without project-level knowledge.
+After phases collect and compact, however, the following diagnostics will be emitted: % TODO fogalmazd át a however utáni részt mert nem jó
 
 \begin{lstlisting}
 	/home/bahramib/MyFolder/TestFolder/b/vec.cpp:7:15: \

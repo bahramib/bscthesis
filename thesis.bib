@@ -1,6 +1,7 @@
 @manual{cppreferencenodiscard,
-	title = {C++ attribute: nodiscard (since C++17)},
-	url = {https://en.cppreference.com/w/cpp/language/attributes/nodiscard},
+	title = {{\CC{}} attribute: nodiscard (since C++17)},
+	url = {http://en.cppreference.com/w/cpp/language/attributes/nodiscard},
+  note = {accessed at: 2022-05-18}
 }
 
 @inproceedings{mapreduce,
@@ -14,36 +15,39 @@
 
 @manual{clangCTU,
   title  = {Cross Translation Unit (CTU) Analysis},
-  url = {https://clang.llvm.org/docs/analyzer/user-docs/CrossTranslationUnit.html},
+  url = {http://clang.llvm.org/docs/analyzer/user-docs/CrossTranslationUnit.html},
+  note = {accessed at: 2022-05-18},
+  author = {Horváth, Gábor and Márton, Gábor and Gera, Zoltán and Fülöp, Endre and Krupp, Dániel and Porkoláb, Zoltán}
 }
 
 @misc{coverity,
   title = {Coverity Scan - Static Analysis},
-  url = {https://scan.coverity.com/o/oss_success_stories/69},
+  url = {http://scan.coverity.com/o/oss_success_stories/69},
+  note = {accessed at: 2022-05-18}
 }
 
 @misc{upstream1,
   author       = {Benedek Attila Bahrami},
   title        = {[clang-tidy] Add infrastructure support for running on project-level information},
-  url 		   = {https://reviews.llvm.org/D124447},
+  url 		   = {http://reviews.llvm.org/D124447},
   howpublished = {Revision on Phabricator for review},
-  year         = {2022},
+  year         = {2022}
 }
 
 @misc{upstream2,
   author       = {Benedek Attila Bahrami},
   title        = {[clang-tidy] Add the misc-discarded-return-value check},
-  url 		   = {https://reviews.llvm.org/D124446},
+  url 		   = {http://reviews.llvm.org/D124446},
   howpublished = {Revision on Phabricator for review},
-  year         = {2022},
+  year         = {2022}
 }
 
 @misc{upstream3,
   author       = {Benedek Attila Bahrami},
   title        = {[clang-tidy] Add project-level analysis support to misc-discarded-return-value},
-  url 		   = {https://reviews.llvm.org/D124448},
+  url 		   = {http://reviews.llvm.org/D124448},
   howpublished = {Revision on Phabricator for review},
-  year         = {2022},
+  year         = {2022}
 }
 
 @book{kandr,
@@ -56,10 +60,13 @@ edition = {2nd},
 }
 
 @article{statcompare,
-author = {Lenarduzzi, Valentina and Lujan, Savanna and Saarimäki, Nyyti and Palomba, Fabio},
-year = {2021},
-title = {A Critical Comparison on Six Static Analysis Tools: Detection, Agreement, and Precision},
-url = {https://doi.org/10.48550/arXiv.2101.08832},
+author = {Lenarduzzi, Valentina and Pecorelli, Fabiano and Saarimäki, Nyyti and Lujan, Savanna and Palomba, Fabio},
+year = {2022},
+month = {01},
+pages = {},
+title = {A Critical Comparison on Six Static Analysis Tools: Detection Agreement and Precision},
+journal = {SSRN Electronic Journal},
+doi = {10.2139/ssrn.4044439}
 }
 
 @article{selectiondef,
@@ -71,7 +78,7 @@ publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 volume = {1},
 number = {OOPSLA},
-url = {https://doi.org/10.1145/3133928},
+url = {http://doi.org/10.1145/3133928},
 doi = {10.1145/3133928},
 journal = {Proc. ACM Program. Lang.},
 month = {oct},
@@ -82,7 +89,9 @@ keywords = {empirical study, method arguments, name-based program analysis, stat
 
 @manual{matcherref,
   title  = {AST Matcher Reference},
-  url = {https://clang.llvm.org/docs/LibASTMatchersReference.html},
+  url = {http://clang.llvm.org/docs/LibASTMatchersReference.html},
+  author = {{LLVM Foundation}},
+  note = {accessed at: 2022-05-18}
 }
 
 @article{googlearticle,
@@ -94,7 +103,7 @@ publisher = {Association for Computing Machinery},
 address = {New York, NY, USA},
 volume = {1},
 number = {OOPSLA},
-url = {https://doi.org/10.1145/3133928},
+url = {http://doi.org/10.1145/3133928},
 doi = {10.1145/3133928},
 abstract = { Identifier names are often used by developers to convey additional information about the meaning of a program over and above the semantics of the programming language itself. We present an algorithm that uses this information to detect argument selection defects, in which the programmer has chosen the wrong argument to a method call in Java programs. We evaluate our algorithm at Google on 200 million lines of internal code and 10 million lines of predominantly open-source external code and find defects even in large, mature projects such as OpenJDK, ASM, and the MySQL JDBC. The precision and recall of the algorithm vary depending on a sensitivity threshold. Higher thresholds increase precision, giving a true positive rate of 85%, reporting 459 true positives and 78 false positives. Lower thresholds increase recall but lower the true positive rate, reporting 2,060 true positives and 1,207 false positives. We show that this is an order of magnitude improvement on previous approaches. By analyzing the defects found, we are able to quantify best practice advice for API design and show that the probability of an argument selection defect increases markedly when methods have more than five arguments. },
 journal = {Proc. ACM Program. Lang.},
@@ -105,129 +114,122 @@ keywords = {name-based program analysis, static analysis, empirical study, metho
 }
 
 @misc{memcached,
-  title = {memcached},
-  tag = {1.6.8},
-  url = {https://github.com/memcached/memcached.git},
+  title = {{MemcacheD}},
+  note = {\texttt{1.6.8}, \texttt{8335dd84ca85651115d518d7e3d963de9d82e22f}, accessed at: 2022-05-18},
+  url = {http://github.com/memcached/memcached.git}
 }
 
 @misc{tmux,
-  title = {tmux},
-  tag = {2.6},
-  url = {https://github.com/tmux/tmux.git},
+  title = {{TMux}},
+  note = {\texttt{2.6}, \texttt{bd71cbbe276432ce8869baa0f2d55433e1ab820c}, accessed at: 2022-05-18},
+  url = {http://github.com/tmux/tmux.git}
 }
 
 @misc{curl,
-  title = {curl},
-  tag = {curl-7_66_0},
-  url = {https://github.com/curl/curl.git},
+  title = {{cURL}},
+  note = {\texttt{curl-7\_66\_0}, \texttt{9cd755e1d768bbf228e7c9faf223b7459f7e0105}, accessed at: 2022-05-18},
+  url = {http://github.com/curl/curl.git}
 }
 
 @misc{twin,
-  title = {twin},
-  tag = {v0.8.1},
-  url = {https://github.com/cosmos72/twin.git},
-}
-
-@misc{redis,
-  title = {redis},
-  tag = {6.2.6},
-  url = {https://github.com/antirez/redis.git},
+  title = {{tWin}},
+  note = {\texttt{v0.8.1}, \texttt{689636ed829c1119ba5507bbd007d678d3d30904}, accessed at: 2022-05-18},
+  url = {http://github.com/cosmos72/twin.git}
 }
 
 @misc{vim,
-  title = {vim},
-  tag = {v8.2.1920},
-  url = {https://github.com/vim/vim.git},
+  title = {Vim},
+  note = {\texttt{v8.2.1920}, \texttt{cf4d454df0619ee41ef40e7e91fce3fb061d7d5b}, accessed at: 2022-05-18},
+  url = {http://github.com/vim/vim.git}
 }
 
 @misc{openssl,
-  title = {openssl},
-  tag = {openssl-3.0.0-alpha7},
-  url = {https://github.com/openssl/openssl.git},
+  title = {{OpenSSL}},
+  note = {\texttt{openssl-3.0.0-alpha7}, \texttt{f9a5682e5c0fbf8b17319d71b0040dba9f8b46ee}, accessed at: 2022-05-18},
+  url = {http://github.com/openssl/openssl.git}
 }
 
 @misc{sqlite,
-  title = {sqlite},
-  tag = {version-3.33.0},
-  url = {https://github.com/sqlite/sqlite.git},
+  title = {{SQLite}},
+  note = {\texttt{version-3.33.0}, \texttt{ef215fbf3b581ef4e0273bb3932fa522af88fd7e}, accessed at: 2022-05-18},
+  url = {http://github.com/sqlite/sqlite.git}
 }
 
 @misc{ffmpeg,
-  title = {ffmpeg},
-  tag = {n4.3.1},
-  url = {https://github.com/FFmpeg/FFmpeg.git},
+  title = {{FFmpeg}},
+  note = {\texttt{n4.3.1}, \texttt{6b6b9e593dd4d3aaf75f48d40a13ef03bdef9fdb}, accessed at: 2022-05-18},
+  url = {http://github.com/FFmpeg/FFmpeg.git}
 }
 
 @misc{postgres,
-  title = {postgres},
-  tag = {REL_13_0},
-  url = {https://github.com/postgres/postgres.git},
-}
-
-@misc{tinyxml2,
-  title = {tinyxml2},
-  tag = {8.0.0},
-  url = {https://github.com/leethomason/tinyxml2.git},
+  title = {{PostgreSQL}},
+  note = {\texttt{REL\_13\_0}, \texttt{29be9983a64c011eac0b9ee29895cce71e15ea77}, accessed at: 2022-05-18},
+  url = {http://github.com/postgres/postgres.git}
 }
 
 @misc{libwebm,
-  title = {libwebm},
-  tag = {libwebm-1.0.0.27},
-  url = {https://github.com/webmproject/libwebm.git},
+  title = {{libWebM}},
+  note = {\texttt{libwebm-1.0.0.27}, \texttt{82ac5fcdc8525820442faa90847b452113fc9394}, accessed at: 2022-05-18},
+  url = {http://github.com/webmproject/libwebm.git}
 }
 
 @misc{xerces,
-  title = {xerces},
-  tag = {v3.2.3},
-  url = {https://github.com/apache/xerces-c.git},
+  title = {Xerces},
+  note = {\texttt{v3.2.3}, \texttt{cf1912ac95d4147be08aef4e78f894a3919277d9}, accessed at: 2022-05-18},
+  url = {http://github.com/apache/xerces-c.git}
 }
 
 @misc{bitcoin,
-  title = {bitcoin},
-  tag = {v0.20.1},
-  url = {https://github.com/bitcoin/bitcoin.git},
+  title = {Bitcoin},
+  note = {\texttt{v0.20.1}, \texttt{a62f0ed64f8bbbdfe6467ac5ce92ef5b5222d1bd}, accessed at: 2022-05-18},
+  url = {http://github.com/bitcoin/bitcoin.git}
 }
 
 @misc{protobuf,
-  title = {protobuf},
-  tag = {v3.13.0-CSA-patched},
-  url = {https://github.com/steakhal/protobuf.git},
+  title = {Protocol Buffers},
+  note = {\texttt{v3.13.0}, \texttt{fde7cf7358ec7cd69e8db9be4f1fa6a5c431386a}, accessed at: 2022-05-18},
+  url = {http://github.com/protocolbuffers/protobuf.git}
 }
 
 @misc{llvm,
-  title = {llvm-project},
-  tag = {llvmorg-12.0.0},
-  url = {https://github.com/llvm/llvm-project.git},
+  title = {{LLVM}},
+  note = {\texttt{llvmorg-12.0.0}, \texttt{d28af7c654d8db0b68c175db5ce212d74fb5e9bc}, accessed at: 2022-05-18},
+  url = {http://github.com/llvm/llvm-project.git}
 }
 
 @misc{qtbase,
-  title = {qtbase},
-  tag = {v6.2.0},
-  url = {https://github.com/qt/qtbase.git},
+  title = {{QtBase}},
+  note = {\texttt{v6.2.0}, \texttt{cc60cf83db6bbf9775b1f7747a48d6b7eb24e585}, accessed at: 2022-05-18},
+  url = {http://github.com/qt/qtbase.git}
 }
 
 @misc{mongo,
-  title = {mongo},
-  tag = {r4.4.6},
-  url = {https://github.com/mongodb/mongo.git},
+  title = {{MongoDB}},
+  note = {\texttt{r4.4.6}, \texttt{72e66213c2c3eab37d9358d5e78ad7f5c1d0d0d7}, accessed at: 2022-05-18},
+  url = {http://github.com/mongodb/mongo.git}
 }
 
 @misc{codechecker,
-  title = {codechecker},
-  tag = {v6.17.0},
-  url = {https://github.com/Ericsson/codechecker.git},
+  title = {{CodeChecker}},
+  note = {\texttt{v6.17.0}, \texttt{d0e2d7ba5f62d722e907d1ce8af6dbb24ee34e5d}, accessed at: 2022-05-18},
+  url = {http://github.com/Ericsson/codechecker.git}
 }
 
 @misc{contour,
-  title = {contour},
-  tag = {v0.2.0.173},
-  url = {https://github.com/contour-terminal/contour.git},
+  title = {Contour},
+  note = {\texttt{v0.2.0.173}, \texttt{574d721fb11c52db0d369a4119853282358c39cd}, accessed at: 2022-05-18},
+  url = {http://github.com/contour-terminal/contour.git}
 }
 
 @inproceedings{typemig,
-title	= {Incremental Type Migration Using Type Algebra},
-author	= {Hyrum Wright},
-year	= {2020}
+author={Wright, Hyrum K.},
+booktitle={2020 IEEE International Conference on Software Maintenance and Evolution (ICSME)},
+title={Incremental Type Migration Using Type Algebra},
+year={2020},
+volume={},
+number={},
+pages={756-765},
+doi={10.1109/ICSME46990.2020.00085}
 }
 
 @inproceedings{autorefact,
@@ -237,7 +239,19 @@ year	= {2013},
 booktitle	= {Proceedings of the 29th International Conference on Software Maintenance}
 }
 
+@manual{flags,
+  title  = {Using Clang-Tidy},
+  utl = {http://clang.llvm.org/extra/clang-tidy/#id2},
+  author = {{LLVM Foundation}},
+  note = {accessed at: 2022-05-18}
+}
 
+@manual{yamllib,
+  title  = {LLVM YAML I/O Documentation},
+  url = {http://llvm.org/docs/YamlIO.html},
+  author = {{LLVM Foundation}},
+  note = {accessed at: 2022-05-18}
+}
 
 
 
