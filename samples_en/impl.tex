@@ -205,6 +205,7 @@ int main() {
 \end{listing}
 
 \subsection{Pattern Matching}
+\label{sec:matchers}
 
 Clang-Tidy checkers have \emph{matchers} that you can set up in the checker's overridden function \mintinline{CPP}{registerMatchers}.
 This has its matcher, a \mintinline{CPP}{MatchFinder} as the parameter, and in this function we have to use its \mintinline{CPP}{addMatcher}
@@ -629,6 +630,8 @@ This checker's upgrade to the multipass infrastructure differs from the original
 it gives us very different results. The checker has run on large projects. It ran with 50\% and 80\% threshold both with and
 without collection and compacting. The results are shown in \cref{tab:proj-test}.
 The analysis was performed with the \emph{CSA-Testbench} toolkit~\cite{Horvath_Kovacs_Szecsi_2020} built on top of CodeChecker~\cite{codechecker}.
+These analyses were done multiple times, because when looking at the results I realised that some corner cases were originally not implemented properly.
+Moreover, the implementation contains synthetic integration tests for each matcher (see \cref{sec:matchers}) that are executed together with the rest of Clang-Tidy's tests.
 
 % \pagebreak
 %\begin{center}
