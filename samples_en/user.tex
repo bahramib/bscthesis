@@ -4,11 +4,11 @@
 \label{ch:user}
 
 Both the changes in the Clang-Tidy infrastructure and our new checker focuses heavily on LLVM's Clang-Tidy.
-Clang-Tidy is a Clang-based \CC{} “linter” tool. Its purpose is to provide an extensible framework for diagnosing and fixing
+Clang-Tidy is a Clang-based \CC{} ``linter'' tool. Its purpose is to provide an extensible framework for diagnosing and fixing
 typical programming errors, like style violations, interface misuse, or bugs that can be deduced via static analysis.
 Clang-Tidy is modular and provides a convenient interface for writing new checks. % http://clang.llvm.org/extra/clang-tidy/
 
-This tool can be found in the LLVM project repository. % http://github.com/llvm/llvm-project
+The tool, after upstreaming, will be found in the LLVM project repository at \url{http://github.com/llvm/llvm-project}.
 
 \section{Install guide}
 
@@ -24,7 +24,7 @@ for building is 16 GiB, and the optimal amount is 64 GiB of memory. % continue w
 	\centering
 	\begin{tabular}{ | m{0.33\textwidth} | m{0.33\textwidth} | m{0.33\textwidth} | }
 		\hline
-		\textbf{Operating System} & \textbf{Processor Architecture} & \textbf{Compiler} \\
+		\textbf{Operating system} & \textbf{Processor architecture} & \textbf{Compiler} \\
 		\hline \hline
 		Linux & x861 & gcc, clang \\
 		\hline
@@ -61,17 +61,17 @@ for building is 16 GiB, and the optimal amount is 64 GiB of memory. % continue w
 	\label{tab:clang-req}
 \end{table}
 
-Software requirements include (at least) GCC version 7.1.0, CMake version 3.13.4, Python version 3.6 and GNU Make version 3.79.
+Software requirements include (at least) GCC version \emph{7.1.0}, CMake version \emph{3.13.4}, Python version \emph{3.6} and GNU Make version \emph{3.79}.
 
 \subsection{Building from source}
 
 These commands will compile LLVM from source. The building process with parameters can be found on the \texttt{README.md} of
 LLVM project Github repository,\footnote{\url{http://github.com/llvm/llvm-project\#readme} accessed 2022. 05. 03.} or the Getting
-Started\footnote{\url{http://clang.llvm.org/get_started.html}, accessed 2022. 05. 03.} page of Clang documentation. These are the commands I used for
-the compilation.
-% http://github.com/llvm/llvm-project#readme and http://clang.llvm.org/get_started.html
+Started\footnote{\url{http://clang.llvm.org/get_started.html}, accessed 2022. 05. 03.} page of Clang documentation. The commands I used for
+the compilation are shown in \cref{lst:compile-commands}.
 
-\begin{lstlisting}[language={bash}]
+\begin{listing}
+	\begin{minted}{Bash}
 	git clone http://github.com/llvm/llvm-project.git
 	cd llvm-project
 	mkdir Build
@@ -93,37 +93,44 @@ the compilation.
 		-DLLVM_ENABLE_ASSERTIONS=ON \
 		-G Ninja \
 		../llvm
-	
+
 	# cmake --build build [-- [options] <target>] or your build system specified above directly.
 	ninja -j12 clang-tidy llvm-symbolizer
-\end{lstlisting}
+\end{minted}
+	\caption{Compiling LLVM from source on a weaker machine.}\label{lst:compile-commands}
+\end{listing}
 
-Explanation for some flags: at \texttt{DLLVM\_USE\_LINKER} we can change the linker we are using, either Gold or LLD (Linker for LLVM). The
-latter needs to be installed. \texttt{DLLVM\_PARALLEL\_LINK\_JOBS} and \texttt{-j} at Ninja sets the CPU capacity. The recommended amount for
-\texttt{LINK\_JOBS} is one quarter of the amount of cores, and Ninja job amount should be $cores - 2$. I used these commands on a
-server with 32 GB memory and 14 CPU cores.
+Explanation for some flags: at \mintinline{Bash}{LLVM_USE_LINKER} we can change the linker we are using, either Gold or LLD (Linker for LLVM). The
+latter needs to be installed. \mintinline{Bash}{LLVM_PARALLEL_LINK_JOBS} and \texttt{-j} at Ninja sets the CPU multiprocessing job capacity. The recommended amount for
+\mintinline{Bash}{LLVM_PARALLEL_LINK_JOBS} is one quarter of the amount of cores available, and full Ninja job amount should be $cores - 2$. I used these commands on a
+server with 32 GiB memory and 14 (virtual) CPU cores.
 
 
 \section{Running by Translation Units}
 \label{by-TU}
 
 The user can give Clang-Tidy multiple translation units to run on, and it will emit diagnostics separately for each one. You run it by
-using \lstinline{clang-tidy -checks='-*,misc-discarded-return-value' -p ./Build a/main.cpp b/main.cpp},
-where the "checks" first disables all checkers with -*, then enables our checker, the \texttt{-p} flag gets the build path that reads a
+using \mintinline{Bash}{clang-tidy -checks='-*,misc-discarded-return-value' -p ./Build a/main.cpp b/main.cpp},
+where the ``checks'' first disables all checkers with \mintinline{Bash}{-*}, then enables our checker, the \texttt{-p} flag gets the build path that reads a
 compile command database, and finally we give the paths to the paths of our source files~\cite{flags}. Here we are getting two separate diagnostics
 for our two separate files or translation units.
 
-\begin{lstlisting}[caption={Diagnostic output without project-level knowledge.},captionpos=b]
+\begin{listing}[H]
+	\begin{minted}{Bash}
 	bahramib@cc:~/MyFolder/TestFolder$ clang-tidy -checks='-*,misc-discarded-return-value' -p ./Build a/main.cpp b/main.cpp
 
-	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: \
-	warning: return value of 'maybe_check_this' is used \
-	in most calls, but not in this one [misc-discarded-return-value]
+	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9:
+		warning: return value of 'maybe_check_this' is used
+		in most calls, but not in this one [misc-discarded-return-value]
+
 			MyClass::maybe_check_this();
 			^
-	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: note: \
-	value consumed or checked in 75% (3 out of 4) of cases
-\end{lstlisting}
+
+	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: note:
+		value consumed or checked in 75% (3 out of 4) of cases
+	\end{minted}
+\caption{Diagnostic output without project-level knowledge.}
+\end{listing}
 
 
 
@@ -135,7 +142,7 @@ for our two separate files or translation units.
 
 Clang-Tidy is supported by CodeChecker.~\cite{codechecker}
 
-\subsection{Configuring Threshold}
+\subsection{Configuring the threshold}
 
 As previously descussed, the ratio of the amount of checked function calls and all the function calls is very important for the
 diagnosis, since we do not necessarily want to be notified of all the unused calls, but let us say if a function's return value
@@ -143,24 +150,28 @@ is used in at least 65\% of all calls, we might want to be warned about the miss
 
 The checker has an option for this called the \texttt{ConsumeThreshold}, that is the percentage above which we would like to be warned,
 but not under.
-You can configure \texttt{ConsumeThreshold}, and any Clang-Tidy checker option with Tidy's \lstinline{-config} flag. Here you will have to type
+You can configure \texttt{ConsumeThreshold}, and any Clang-Tidy checker option with Tidy's \mintinline{text}{-config} flag. Here you will have to type
 the name of the checker and its option member, with the desired value as a \emph{key-value pair}. This is how it looks with 50\%:
-\lstinline!-config='{CheckOptions: [{key: misc-discarded-return-value.ConsumeThreshold, value: 50}]}'!. With this option the full
+\mintinline{text}{-config='{CheckOptions: [{key: misc-discarded-return-value.ConsumeThreshold, value: 50}]}'}. With this option the full
 command looks like this:
-\lstinline!clang-tidy -checks='-*,misc-discarded-return-value'-config='{CheckOptions: [{key: misc-discarded-return-value.ConsumeThreshold, value: 50}]}' -p ./Build a/main.cpp b/main.cpp!.
+\mintinline{text}{clang-tidy -checks='-*,misc-discarded-return-value'-config='{CheckOptions: [{key: misc-discarded-return-value.ConsumeThreshold, value: 50}]}' -p ./Build a/main.cpp b/main.cpp}.
 
 \subsection{Supressing Warnings}
 
 Let us review what is wrong with our code in \cref{unsuppressed}. In function \texttt{foo}, we forget to use our parameter \texttt{p}, and we do not
 check the return value when calling \texttt{foo}. These triggers one warning for each mistake as seen in \cref{fig:compiler-warning}.
-\begin{lstlisting}[language={C++},caption={An example of both unused parameter and ignored return value with nodiscard.},label={unsuppressed}]
+
+\begin{listing}[H]
+\begin{minted}{CPP}
 [[nodiscard]] int foo(int p) {
   return 1;
 }
 int main(int argc, char**) {
   foo(argc);
 }
-\end{lstlisting}
+\end{minted}
+\caption{An example of both unused parameter and ignored return value with nodiscard.}\label{unsuppressed}
+\end{listing}
 
 \begin{figure}[H]
 	\includegraphics[width=\linewidth]{images/nodiscard_warning.png}
@@ -168,12 +179,13 @@ int main(int argc, char**) {
 	\label{fig:compiler-warning}
 \end{figure}
 
-If we do not want to fix these issues, but rather silence our warnings, we can simply write \lstinline{(void)} before the call
-to cast it to \lstinline{void} and trick the compiler into thinking that we did check the return value.
-Similarly, we could cast our parameter \texttt{p} to \lstinline{void} as a distinct statement to make it seem like we used it. On \cref{suppressed}
+If we do not want to fix these issues, but rather silence our warnings, we can simply write \mintinline{CPP}{(void)} before the call
+to cast it to \mintinline{CPP}{void} and trick the compiler into thinking that we did check the return value.
+Similarly, we could cast our parameter \texttt{p} to \mintinline{CPP}{void} as a distinct statement to make it seem like we used it. On \cref{suppressed}
 we can see the suppressed version that does not yield warnings.
 
-\begin{lstlisting}[language={C++},caption={The same example, now with suppressed warnings.},label={suppressed}]
+\begin{listing}[H]
+\begin{minted}{CPP}
 [[nodiscard]] int foo(int p) {
   (void)p;
   return 1;
@@ -181,21 +193,23 @@ we can see the suppressed version that does not yield warnings.
 int main(int argc, char**) {
  (void)foo(argc);
 }
-\end{lstlisting}
+\end{minted}
+\caption{The same example, now with suppressed warnings.}\label{suppressed}
+\end{listing}
 
-The suppression of our new checker warnings follows the exact same convention. Casting to \lstinline{void} acts as usage of the return
+The suppression of our new checker warnings follows the exact same convention. Casting to \mintinline{CPP}{void} acts as usage of the return
 value and thus will not give warnings, despite not actually checking it.
 
 Both the philosophy and practice of silencing a single case of an unchecked function call is essentially the same as silencing the
-warning of \texttt{[[nodiscard]]} or an unused parameter. By simply writing \lstinline{(void)} before the call, to cast it to void,
+warning of \mintinline{CPP}{[[nodiscard]]} or an unused parameter. By simply writing \mintinline{CPP}{(void)} before the call, to cast it to void,
 tricking the compiler and the checker into thinking it is used, but not affecting anything in reality.
-If we got a warning on the line \lstinline{foo();}, from the checker or \texttt{[[nodiscard]]}, we will get neither if we change it
-to \lstinline{(void)foo();}.
+If we got a warning on the line \mintinline{CPP}{foo();}, from the checker or \mintinline{CPP}{[[nodiscard]]}, we will get neither if we change it
+to \mintinline{CPP}{(void)foo();}.
 
 \section{Multiple Phase Version}
 
 The updated infrastructure contains two new flags for running Clang-Tidy, \texttt{multipass-phase} and \texttt{multipass-dir}.
-\texttt{multipass-phase} is an \lstinline{enum} flag, that has three values, \texttt{"collect", "compact"} and \texttt{"diagnose"}
+\texttt{multipass-phase} is an \mintinline{CPP}{enum} flag, that has three values, \mintinline{CPP}{"collect"}, \mintinline{CPP}{"compact"} and \mintinline{CPP}{"diagnose"}
 with the latter as default.
 \texttt{multipass-dir} needs a path to a directory where the checkers that support the collect feature can dump their collection data
 that they are going to compact and use later.
@@ -206,29 +220,35 @@ that they are going to compact and use later.
 The Collect phase, as the name suggest, will have the checkers collect data on each translation unit and write them into unique YAML
 files to later reuse this data. This is how you normally run collect phase on the desired files:
 
-\begin{lstlisting}[language={bash}]
+\begin{listing}[H]
+	\begin{minted}{Bash}
 	clang-tidy \
 	-checks='-*,misc-discarded-return-value' \
 	--multipass-phase=collect \
 	--multipass-dir='MyCollectionDirectory' \
 	-p ./Build \
 	a/main.cpp b/main.cpp
-\end{lstlisting}
+	\end{minted}
+\end{listing}
 
 What the Discarded Return Value checker does in this phase is count the amount the declared non-void functions were called,
 and count the amount that these function's return values were checked. After finishing counting in one translation unit, it writes the
-collected numbers and function names into a YAML file.  
-\par After collecting, you do not get any diagnostics or output text, but the desired amount of (in this case 2) YAML files are generated.
+collected numbers and function names into a YAML file.
 
-\begin{lstlisting}[caption={The YAML files containing the collection data.},captionpos=b]
-bahramib@cc:~/MyFolder/TestFolder/MyCollectionDirectory$ ll
-total 8
--rw-r--r-- 1 bahramib bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.12949585208029997868.yaml
--rw-r--r-- 1 bahramib bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.4924802982073527590.yaml
-\end{lstlisting}
+After collecting, you do not get any diagnostics or output text, but the desired amount of (in this case 2) YAML files are generated.
 
-\begin{lstlisting}[caption={Contents of the collection files.},captionpos=b]
-	# First TU
+\begin{listing}[H]
+	\begin{minted}{Bash}
+bahramib@cc:~/MyFolder/TestFolder/MyCollectionDirectory$ ls -l
+-rw-r--r-- 1 bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.12949585208029997868.yaml
+-rw-r--r-- 1 bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.4924802982073527590.yaml
+	\end{minted}
+	\caption{The YAML files containing the collection data.}
+\end{listing}
+
+\begin{listing}[H]
+	\begin{minted}{YAML}
+	# First TU, a/main.cpp
 	---
 	- ID:              'c:@S@MyClass@F@check_that#S'
 	  Consumed:        3
@@ -237,7 +257,10 @@ total 8
 	  Consumed:        0
 	  Total:           3
 	...
-	# Second TU
+	\end{minted}
+
+	\begin{minted}{YAML}
+	# Second TU, b/main.cpp
 	---
 	- ID:              'c:@S@MyClass@F@check_that#S'
 	  Consumed:        1
@@ -246,34 +269,42 @@ total 8
 	  Consumed:        3
 	  Total:           4
 	...
-\end{lstlisting}
+	\end{minted}
+	\caption{Contents of the results of collecting data.}
+\end{listing}
 
 \subsection{Compact}
 
 The Compact phase will iterate through the collected data per checker and have the checkers read, use and compact all the data collected
 into one YAML file. Flags aside from \texttt{checks}, \texttt{multipass-phase} and \texttt{multipass-dir} have no effect.
 
-\begin{lstlisting}[language={bash}]
+\begin{listing}[H]
+	\begin{minted}{Bash}
 	clang-tidy \
 	-checks='-*,misc-discarded-return-value' \
 	--multipass-phase=compact \
 	--multipass-dir='MyCollectionDirectory' \
-\end{lstlisting}
+	\end{minted}
+\end{listing}
 
 This checker reads the data on each function back and constructs new data similar to the previous ones. If one function is called in multiple
 translation units, then it adds the numbers from the TU's YAML file to the new structure. After it is finished, the data is
 written into a single YAML file.
-\par This phase does not write anything on standard output either, but will construct the compacted YAMLs per checker.
 
-\begin{lstlisting}[caption={The new file containing the collected data.},captionpos=b]
-	bahramib@cc:~/MyFolder/TestFolder/MyCollectionDirectory$ ll
-	total 12
-	-rw-r--r-- 1 bahramib bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.12949585208029997868.yaml
-	-rw-r--r-- 1 bahramib bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.4924802982073527590.yaml
-	-rw-r--r-- 1 bahramib bahramib 196 Apr 30 13:06 misc-discarded-return-value.yaml
-\end{lstlisting}
+This phase does not write anything on standard output either, but will construct the compacted YAMLs per checker.
 
-\begin{lstlisting}[caption={Contents of the compacted file: the grouped sum of the input.},captionpos=b]
+\begin{listing}[H]
+	\begin{minted}{Bash}
+	bahramib@cc:~/MyFolder/TestFolder/MyCollectionDirectory$ ls -l
+	-rw-r--r-- 1 bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.12949585208029997868.yaml
+	-rw-r--r-- 1 bahramib 196 Apr 30 13:00 misc-discarded-return-value.main.cpp.4924802982073527590.yaml
+	-rw-r--r-- 1 bahramib 196 Apr 30 13:06 misc-discarded-return-value.yaml
+	\end{minted}
+	\caption{The new file containing the collected data.}
+\end{listing}
+
+\begin{listing}[H]
+	\begin{minted}{YAML}
 	---
 	- ID:              'c:@S@MyClass@F@check_that#S'
 	  Consumed:        4
@@ -282,7 +313,9 @@ written into a single YAML file.
 	  Consumed:        3
 	  Total:           7
 	...
-\end{lstlisting}
+	\end{minted}
+	\caption{Contents of the compacted file: the grouped sum of the input.}
+\end{listing}
 
 \subsection{Diagnose}
 
@@ -291,36 +324,46 @@ phase Clang-Tidy did. It gives diagnostics for each translation unit separately,
 if compact has not been performed for a checker. Otherwise that checker will read and use the data compacted
 in the respective YAML file, and give its diagnostics calculated with project-level knowledge.
 
-\begin{lstlisting}[language={bash}]
+\begin{listing}[H]
+	\begin{minted}{Bash}
 	clang-tidy \
 	-checks='-*,misc-discarded-return-value' \
 	--multipass-phase=diagnose \
 	--multipass-dir='MyCollectionDirectory' \
 	-p ./Build \
 	a/main.cpp b/main.cpp
-\end{lstlisting}
+	\end{minted}
+\end{listing}
 
 My checker reads in the compacted data with the call and check amounts for each function and simply decides
 if diagnostics are needed or not for each unchecked return value in the current translation unit.
 The output is the diagnostics.
 
-\begin{lstlisting}[caption={Diagnostic output with project-level knowledge.},captionpos=b]
-	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: \
-	warning: return value of 'check_that' is used \
-	in most calls, but not in this one [misc-discarded-return-value]
-	MyClass::check_that();
-		^
-	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: note: \
-	value consumed or checked in 66% (4 out of 6) of cases
+\begin{listing}[H]
+	\begin{minted}{Bash}
+	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9:
+		warning: return value of 'check_that' is used
+		in most calls, but not in this one [misc-discarded-return-value]
 
-	/home/bahramib/MyFolder/TestFolder/a/main.cpp:15:5: \
-	warning: return value of 'check_that' is used \
-	in most calls, but not in this one [misc-discarded-return-value]
-	MyClass::check_that();
-	^
-	/home/bahramib/MyFolder/TestFolder/a/main.cpp:15:5: note: \
-	value consumed or checked in 66% (4 out of 6) of cases
-\end{lstlisting}
+			MyClass::check_that();
+			^
+
+	/home/bahramib/MyFolder/TestFolder/a/main.cpp:12:9: note:
+		value consumed or checked in 66% (4 out of 6) of cases
+
+
+	/home/bahramib/MyFolder/TestFolder/a/main.cpp:15:5:
+		warning: return value of 'check_that' is used
+		in most calls, but not in this one [misc-discarded-return-value]
+
+			MyClass::check_that();
+			^
+
+	/home/bahramib/MyFolder/TestFolder/a/main.cpp:15:5: note:
+		value consumed or checked in 66% (4 out of 6) of cases
+	\end{minted}
+	\caption{Diagnostic output with project-level knowledge.}
+\end{listing}
 
 
 
@@ -337,222 +380,21 @@ that used to give warning when diagnosed separately which with project-level kno
 any warnings, but now it gives two, because it passed the threshold.
 
 In \cref{lst:motivation-example} we talked about our code getting no warnings without project-level knowledge.
-After phases collect and compact, however, the following diagnostics will be emitted: % TODO fogalmazd át a however utáni részt mert nem jó
+After phases collect and compact, however, the following diagnostics will be emitted:
 
-\begin{lstlisting}
-	/home/bahramib/MyFolder/TestFolder/b/vec.cpp:7:15: \
-	warning: return value of 'erase' is used \
-	in most calls, but not in this one [misc-discarded-return-value]
-            c.erase(it);
-              ^
-/home/bahramib/MyFolder/TestFolder/b/vec.cpp:7:15: note: \
-value consumed or checked in 66% (2 out of 3) of cases
-\end{lstlisting}
+\begin{listing}[H]
+	\begin{minted}{Bash}
+	/home/bahramib/MyFolder/TestFolder/b/vec.cpp:7:15:
+		warning: return value of 'erase' is used
+		in most calls, but not in this one [misc-discarded-return-value]
+
+			c.erase(it);
+			  ^
+
+		/home/bahramib/MyFolder/TestFolder/b/vec.cpp:7:15: note:
+		value consumed or checked in 66% (2 out of 3) of cases
+	\end{minted}
+\end{listing}
 
 We can clearly see, that our diagnosis gave us the real results this time.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\iffalse
-\chapter{hide}
-		\begin{enumerate}
-			\item\label{step:first} Donec pretium et quam a cursus. Ut sollicitudin tempus urna et mollis.
-			\item Aliquam et aliquam turpis, sed fermentum mauris. Nulla eget ex diam.
-			\item Donec eget tellus pharetra, semper neque eget, rutrum diam Step~\ref{step:first}.
-		\end{enumerate}
-
-		Praesent porta, metus eget eleifend consequat, eros ligula eleifend ex, a pellentesque mi est vitae urna. Vivamus turpis nunc, iaculis non leo eget, mattis vulputate tellus. Maecenas rutrum eros sem, pharetra interdum nulla porttitor sit amet. In vitae viverra ante. Maecenas sit amet placerat orci, 
-		sed tincidunt velit. Vivamus mattis, enim vel suscipit elementum, quam odio venenatis elit\footnote{Phasellus faucibus varius purus, nec tristique enim porta vitae.}, et mollis nulla nunc a risus. Praesent purus magna, tristique sed lacus sit amet, convallis malesuada magna. 
-
-		\begin{description}
-			\item[Vestibulum venenatis] malesuada enim, ac auctor erat vestibulum et. Phasellus id purus a leo suscipit accumsan.
-			\item[Orci varius natoque] penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam interdum rhoncus nisl, vel pharetra arcu euismod sagittis. Vestibulum ac turpis auctor, viverra turpis at, tempus tellus.
-			\item[Morbi dignissim] erat ut rutrum aliquet. Nulla eu rutrum urna. Integer non urna at mauris scelerisque rutrum sed non turpis.
-		\end{description}
-
-		\subsection{Lists with narrow spacing inbetween items}
-
-		Phasellus ultricies, sapien sit amet ultricies placerat, velit purus viverra ligula, id consequat ipsum odio imperdiet enim:
-		\begin{compactenum}
-			\item Maecenas eget lobortis leo.
-			\item Donec eget libero enim.
-			\item In eu eros a eros lacinia maximus ullamcorper eget augue.
-		\end{compactenum}
-
-		\bigskip
-
-		In quis turpis metus. Proin maximus nibh et massa eleifend, a feugiat augue porta. Sed eget est purus. Duis in placerat leo. Donec pharetra eros nec enim convallis:
-		\begin{compactitem}
-			\item Pellentesque odio lacus.
-			\item Maximus ut nisl auctor.
-			\item Sagittis vulputate lorem.
-		\end{compactitem}
-
-		\bigskip
-
-		Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Sed lorem libero, dignissim vitae gravida a, ornare vitae est.
-		\begin{compactdesc}
-			\item[Cras maximus] massa commodo pellentesque viverra.
-			\item[Morbi sit] amet ante risus. Aliquam nec sollicitudin mauris
-			\item[Ut aliquam rhoncus sapien] luctus viverra arcu iaculis posuere
-		\end{compactdesc}
-
-
-		\section{Images and figures}
-
-		Aliquam vehicula luctus mi a pretium. Nulla quam neque, maximus nec velit in, aliquam mollis tortor. Aliquam erat volutpat. Curabitur vitae laoreet turpis. Integer id diam ligula. Nulla sodales purus id mi consequat, eu venenatis odio pharetra. Cras a arcu quam. Suspendisse augue risus, pulvinar a turpis et, commodo aliquet turpis. Nulla aliquam scelerisque mi eget pharetra. Mauris sed posuere elit, ac lobortis metus. Proin lacinia sit amet diam sed auctor. Nam viverra orci id sapien sollicitudin, a aliquam lacus suscipit, Figure~\ref{fig:example-1}:
-
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=0.6\textwidth,height=100px]{elte_cimer_szines}
-			\caption{Quisque ac tincidunt leo}
-			\label{fig:example-1}
-		\end{figure}
-
-		\subsection{Framing figures}
-
-		Ut aliquet nec neque eget fermentum. Cras volutpat tellus sed placerat elementum. Quisque neque dui, consectetur nec finibus eget, blandit id purus. Nam eget ipsum non nunc placerat interdum.
-
-		\begin{figure}[H]
-			\centering
-			\includegraphics[width=0.6\textwidth,height=100px,frame]{elte_cimer_szines}
-			\caption{Quisque ac tincidunt leo}
-		\end{figure}
-
-		\subsection{Subfigures}
-
-		In non ipsum fermentum urna feugiat rutrum a at odio. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Nulla tincidunt mattis nisl id suscipit. Sed bibendum ac felis sed volutpat. Nam pharetra nisi nec facilisis faucibus. Aenean tristique nec libero non commodo. Nulla egestas laoreet tempus. Nunc eu aliquet nulla, quis vehicula dui. Proin ac risus sodales, gravida nisi vitae, efficitur neque, Figure~\ref{fig:example-2}:
-
-		\begin{figure}[H]
-			\centering
-			\subcaptionbox{Vestibulum quis mattis urna}{
-				\includegraphics[width=0.45\linewidth]{elte_cimer_szines}}
-			\hspace{5pt}
-			\subcaptionbox{Donec hendrerit quis dui sit amet venenatis}{
-				\includegraphics[width=0.45\linewidth]{elte_cimer_szines}}
-			\caption{Aenean porttitor mi volutpat massa gravida}
-			\label{fig:example-2}
-		\end{figure}
-
-		Nam et nunc eget elit tincidunt sollicitudin. Quisque ligula ipsum, tempor vitae tortor ut, commodo rhoncus diam. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Phasellus vehicula quam dui, eu convallis metus porta ac.
-
-
-		\section{Tables}
-
-		Nam magna ex, euismod nec interdum sed, sagittis nec leo. Nam blandit massa bibendum mattis tristique. Phasellus tortor ligula, sodales a consectetur vitae, placerat vitae dolor. Aenean consequat in quam ac mollis. 
-
-		\begin{table}[H]
-			\centering
-			\begin{tabular}{ | m{0.25\textwidth} | m{0.65\textwidth} | }
-				\hline
-				\textbf{Phasellus tortor} & \textbf{Aenean consequat} \\
-				\hline \hline
-				\emph{Sed malesuada} & Aliquam aliquam velit in convallis ultrices. \\
-				\hline
-				\emph{Purus sagittis} &  Quisque lobortis eros vitae urna lacinia euismod. \\
-				\hline
-				\emph{Pellentesque} & Curabitur ac lacus pellentesque, eleifend sem ut, placerat enim. Ut auctor tempor odio ut dapibus. \\
-				\hline
-			\end{tabular}
-			\caption{Maecenas tincidunt non justo quis accumsan}
-			\label{tab:example-1}
-		\end{table}
-
-		\subsection{Multi rows and multi columns}
-
-		Mauris a dapibus lectus. Vestibulum commodo nibh ante, ut maximus magna eleifend vel. Integer vehicula elit non lacus lacinia, vitae porttitor dolor ultrices. Vivamus gravida faucibus efficitur. Ut non erat quis arcu vehicula lacinia. Nulla felis mauris, laoreet sed malesuada in, euismod et lacus. Aenean at finibus ipsum. Pellentesque dignissim elit sit amet lacus congue vulputate.
-
-		\begin{table}[htb]
-			\centering
-			\begin{tabular}{ | c | r | r | r | r | r | r | }
-				\hline
-				\multirow{2}{*}{\textbf{Quisque}} & \multicolumn{2}{ c | }{\textbf{Suspendisse}} & \multicolumn{2}{ c | }{\textbf{Aliquam}} & \multicolumn{2}{ c | }{\textbf{Vivamus}} \\
-				\cline{2-7}
-				& Proin & Nunc & Proin & Nunc & Proin & Nunc \\
-				\hline \hline		
-				Leo & 2,80 MB & 100\% & 232 KB & 8,09\% & 248 KB & 8,64\% \\
-				\hline
-				Vel & 9,60 MB & 100\% & 564 KB & 5,74\% & 292 KB & 2,97\% \\
-				\hline
-				Auge & 78,2 MB & 100\% & 52,3 MB & 66,88\% & 3,22 MB & 4,12\% \\
-				\hline 
-			\end{tabular}
-			\caption[Rövid cím a táblázatjegyzékbe]{Vivamus ac arcu fringilla, fermentum neque sed, interdum erat. Mauris bibendum mauris vitae enim mollis, et eleifend turpis aliquet.}
-			\label{tab:example-2}
-		\end{table}
-
-		\subsection{Long tables over multiple pages}
-
-		Nunc porta placerat leo, sit amet porttitor dui porta molestie. Aliquam at fermentum mi. Maecenas vitae lorem at leo tincidunt volutpat at nec tortor. Vivamus semper lacus eu diam laoreet congue. Vivamus in ipsum risus. Nulla ullamcorper finibus mauris non aliquet. Vivamus elementum rhoncus ex ut porttitor.
-
-		\begin{center}
-			\begin{longtable}{ | p{0.3\textwidth} | p{0.7\textwidth} | }
-				
-				\hline
-				\multicolumn{2}{|c|}{\textbf{Praesent aliquam mauris enim}}
-				\\ \hline
-				
-				\emph{Suspendisse potenti} & \emph{Lorem ipsum dolor sit amet}
-				\\ \hline \hline
-				\endfirsthead % table header on first page
-				
-				\hline
-				\emph{Suspendisse potenti} & \emph{Lorem ipsum dolor sit amet}
-				\\ \hline \hline
-				\endhead % table header on further pages
-				
-				\hline
-				\endfoot % table footer on previous pages
-				
-				\endlastfoot % table footer on last page
-				
-				\emph{Praesent}
-				& Nulla ultrices et libero sit amet fringilla. Nunc scelerisque ante tempus sapien placerat convallis.
-				\\ \hline
-				
-				\emph{Luctus}
-				& Integer hendrerit erat massa, non hendrerit risus convallis at. Curabitur ultrices, justo in imperdiet condimentum, neque tortor luctus enim, luctus posuere massa erat vitae nibh.
-				\\ \hline
-				
-				\emph{Egestas}
-				& Duis fermentum feugiat augue in blandit. Mauris a tempor felis. Pellentesque ultricies tristique dignissim. Pellentesque aliquam semper tristique. Nam nec egestas dolor. Vestibulum id elit quis enim fringilla tempor eu a mauris. Aliquam vitae lacus tellus. Phasellus mauris lectus, aliquam id leo eget, auctor dapibus magna. Fusce lacinia felis ac elit luctus luctus.
-				\\ \hline
-				
-				\emph{Dignissim}
-				& Praesent aliquam mauris enim, vestibulum posuere massa facilisis in. Suspendisse potenti. Nam quam purus, rutrum eu augue ut, varius vehicula tellus. Fusce dui diam, aliquet sit amet eros at, sollicitudin facilisis quam. Phasellus tempor metus vel augue gravida pretium. Proin aliquam aliquam blandit. Nulla id tempus mi. Fusce in aliquam tortor.
-				\\ \hline
-				
-				\emph{Pellentesque}
-				& Donec felis nibh, imperdiet a arcu non, vehicula gravida nibh. Quisque interdum sapien eu massa commodo, ac elementum felis faucibus.
-				\\ \hline
-				
-				\emph{Molestie}
-				& Cras ullamcorper tellus et auctor ultricies. Maecenas tincidunt euismod lectus nec venenatis. Suspendisse potenti. Pellentesque pretium nunc ut euismod cursus. Nam venenatis condimentum quam. Curabitur suscipit efficitur aliquet. Interdum et malesuada fames ac ante ipsum primis in faucibus.
-				\\ \hline
-				
-				\emph{Vivamus semper}
-				& In purus purus, faucibus eu libero vulputate, tristique sodales nunc. Nulla ut gravida dolor. Fusce vel pellentesque mi, vel efficitur eros. Nunc vitae elit tellus. Sed vestibulum auctor consequat. 
-				\\ \hline
-				
-				\emph{Condimentum}
-				& Nulla scelerisque, leo et facilisis pretium, risus enim cursus turpis, eu suscipit ipsum ipsum in mauris. Praesent eget pulvinar ipsum, suscipit interdum nunc. Nam varius massa ut justo ullamcorper sollicitudin. Vivamus facilisis suscipit neque, eu fermentum risus. Ut at mi mauris.
-				\\ \hline
-				
-				\caption{Praesent ullamcorper consequat tellus ut eleifend}
-				\label{tab:example-3}		
-			\end{longtable}
-		\end{center}
-\fi
