@@ -627,17 +627,18 @@ has, we have nothing left to do. Now we only need to emit diagnostics to the rig
 
 This checker's upgrade to the multipass infrastructure differs from the original one only by a little. However,
 it gives us very different results. The checker has run on large projects. It ran with 50\% and 80\% threshold both with and
-without collection and compacting. The results are shown in \cref{tab:proj-test}
+without collection and compacting. The results are shown in \cref{tab:proj-test}.
+The analysis was performed with the \emph{CSA-Testbench} toolkit~\cite{Horvath_Kovacs_Szecsi_2020} built on top of CodeChecker~\cite{codechecker}.
 
-\pagebreak
+% \pagebreak
 %\begin{center}
-	\begin{longtable}{ | m{0.35\textwidth} | m{0.2\textwidth} | m{0.14\textwidth} | m{0.18\textwidth} | } % jobbra a számok és ezres , \,
-		
+	\begin{longtable}{ | m{0.35\textwidth} | m{0.2\textwidth} | m{0.14\textwidth} | m{0.18\textwidth} | }
+
 		\hline
 		\textbf{Project name} & \textbf{Multi-pass?} & \textbf{Threshold} & \textbf{\# reports}  \\
 		\hline \hline
 		\endfirsthead
-		
+
 		\hline
 		\textbf{Project name} & \textbf{Multi-pass?} & \textbf{Threshold} & \textbf{\# reports}  \\
 		\hline \hline
@@ -745,14 +746,14 @@ without collection and compacting. The results are shown in \cref{tab:proj-test}
 		 & \ding{51} & \hfill{}80\% & \hfill{}48 \\
 		\hline
 
-		\multirow{4}{*}{tmux \texttt{2.6}~\cite{tmux}}
+		\multirow{4}{*}{TMux \texttt{2.6}~\cite{tmux}}
 		& \ding{53} & \hfill{}50\% & \hfill{}35 \\
 		& \ding{51} & \hfill{}50\% & \hfill{}48 \\
 		& \ding{53} & \hfill{}80\% & \hfill{}1 \\
 		 & \ding{51} & \hfill{}80\% & \hfill{}1 \\
 		\hline
 
-		\multirow{4}{*}{twin \texttt{v0.8.1}~\cite{twin}}
+		\multirow{4}{*}{tWin \texttt{v0.8.1}~\cite{twin}}
 		& \ding{53} & \hfill{}50\% & \hfill{}54 \\
 		& \ding{51} & \hfill{}50\% & \hfill{}69 \\
 		& \ding{53} & \hfill{}80\% & \hfill{}9 \\
