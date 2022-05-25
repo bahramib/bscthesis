@@ -69,24 +69,6 @@ journal = {SSRN Electronic Journal},
 doi = {10.2139/ssrn.4044439}
 }
 
-@article{selectiondef,
-author = {Rice, Andrew and Aftandilian, Edward and Jaspan, Ciera and Johnston, Emily and Pradel, Michael and Arroyo-Paredes, Yulissa},
-title = {Detecting Argument Selection Defects},
-year = {2017},
-issue_date = {October 2017},
-publisher = {Association for Computing Machinery},
-address = {New York, NY, USA},
-volume = {1},
-number = {OOPSLA},
-url = {http://doi.org/10.1145/3133928},
-doi = {10.1145/3133928},
-journal = {Proc. ACM Program. Lang.},
-month = {oct},
-articleno = {104},
-numpages = {22},
-keywords = {empirical study, method arguments, name-based program analysis, static analysis}
-}
-
 @manual{matcherref,
   title  = {AST Matcher Reference},
   url = {http://clang.llvm.org/docs/LibASTMatchersReference.html},
@@ -313,4 +295,18 @@ booktitle	= {Proceedings of the 29th International Conference on Software Mainte
 	acmid = {50759},
 	publisher = {SIGS Publications},
 	address = {Denville, NJ, USA},
-} 
+}
+
+@article{SZALAY2021111048,
+title = {Practical heuristics to improve precision for erroneous function argument swapping detection in C and C++},
+journal = {Journal of Systems and Software},
+volume = {181},
+pages = {111048},
+year = {2021},
+issn = {0164-1212},
+doi = {http://doi.org/10.1016/j.jss.2021.111048},
+url = {http://sciencedirect.com/science/article/pii/S016412122100145X},
+author = {Richárd Szalay and Ábel Sinkovics and Zoltán Porkoláb},
+keywords = {Static analysis, Function parameters, Argument selection defect, Type safety, Strong typing, Error-prone constructs},
+abstract = {Argument selection defects, in which the programmer chooses the wrong argument to pass to a parameter from a potential set of arguments in a function call, is a widely investigated problem. The compiler can detect such misuse of arguments only through the argument and parameter type for statically typed programming languages. When adjacent parameters have the same type or can be converted between one another, a swapped or out of order call will not be diagnosed by compilers. Related research is usually confined to exact type equivalence, often ignoring potential implicit or explicit conversions. However, in current mainstream languages, like C++, built-in conversions between numerics and user-defined conversions may significantly increase the number of mistakes to go unnoticed. We investigated the situation for C and C++ languages where developers can define functions with multiple adjacent parameters that allow arguments to pass in the wrong order. When implicit conversions – such as parameter pairs of types – are taken into account, the number of mistake-prone functions markedly increases compared to only strict type equivalence. We analysed a sample of projects and categorised the offending parameter types. The empirical results should further encourage the language and library development community to emphasise the importance of strong typing and to restrict the proliferation of implicit conversions. However, the analysis produces a hard to consume amount of diagnostics for existing projects, and there are always cases that match the analysis rule but cannot be “fixed”. As such, further heuristics are needed to allow developers to refactor effectively based on the analysis results. We devised such heuristics, measured their expressive power, and found that several simple heuristics greatly help highlight the more problematic cases.}
+}

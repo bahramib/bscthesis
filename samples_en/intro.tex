@@ -42,7 +42,7 @@ However, we still need to notify the user on the cases where they do not check n
 Static analysis is a method to analyse the source code of software projects without performing a real execution of the application.
 It is widely used in industry~\cite{statcompare}
 to find bugs and code smells during development, to aid in the prevention of bad code that misbehaves in
-production~\cite{selectiondef}.
+production~\cite{googlearticle}.
 Among various methods, the most important techniques are the ones that are based on pattern matching on a syntactic representation of
 the software project.
 
@@ -50,7 +50,7 @@ Clang-Tidy is a declarative, object oriented, strong typed static analysis rule 
 Infrastructure's C-family compiler, Clang.
 It performs pattern matching on Clang's \emph{``Abstract Syntax Tree''} (AST) representation, and generating diagnostics based on which
 analysis modules, called \emph{``checks''}, the user turns on. Pattern matching is an important tool in the industry as well. It can for
-example be used for type migration~\cite{typemig}. An example of an AST can be seen at \cref{fig:ast1}.
+example be used for detecting type safety issues~\cite{SZALAY2021111048} or even automatically performing the type migration~\cite{typemig}. An example of an AST can be seen at \cref{fig:ast1}.
 We will address both the LLVM library and AST matchers in later chapters of the thesis.
 
 Clang-Tidy's infrastructure is a powerful tool that can even be used to generate \mintinline{CPP}{FixIt}s~\cite{autorefact}, but since a
