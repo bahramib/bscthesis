@@ -7,13 +7,19 @@
 	%final, % Set final to hide todos
 ]{elteikthesis}[2021/09/20]
 
+% Include PDF documents
+% For topic declaration page
+\usepackage{pdfpages}
+
 % The minted package is also supported for source highlighting
 % See minted-intregration.tex for example
 \usepackage[newfloat]{minted}
+% \usepackage{minted}
+  \usemintedstyle{borland}
+  \setminted{autogobble}
 \usepackage{pifont}
 \usepackage{cleveref}
 \usepackage{graphicx}
-%\usepackage{minted}
 \def\CC{{C\nolinebreak[4]\hspace{-.05em}\raisebox{.4ex}{\tiny\bf ++}}}
 %\newcommand{\CC}{C\nolinebreak\hspace{-.05em}\raisebox{.4ex}{\tiny\bf +}\nolinebreak\hspace{-.10em}\raisebox{.4ex}{\tiny\bf +}}
 
@@ -35,7 +41,8 @@ projects with project-level knowledge} % title
 % University's metadata
 \university{Eötvös Loránd University} % university's name
 \faculty{Faculty of Informatics} % faculty's name
-\department{Dept. of Programming Languages and Compilers} % department's name
+\department{Department of Programming Languages \\
+	and Compilers} % department's name
 \city{Budapest} % city
 \logo{elte_cimer_szines} % logo
 
@@ -54,7 +61,8 @@ projects with project-level knowledge} % title
 
 % Title page (mandatory)
 \maketitle
-\topicdeclaration
+% Topic declaration page (mandatory) - can also be attached instead
+\includepdf{temabejelento.pdf}
 
 % Table of contents (mandatory)
 \tableofcontents
