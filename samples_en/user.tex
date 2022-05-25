@@ -1,12 +1,14 @@
+% ! TeX root = thesis_en.tex
+
 \chapter{User documentation}
 \label{ch:user}
 
 Both the changes in the Clang-Tidy infrastructure and our new checker focuses heavily on LLVM's Clang-Tidy.
 Clang-Tidy is a Clang-based \CC{} “linter” tool. Its purpose is to provide an extensible framework for diagnosing and fixing
 typical programming errors, like style violations, interface misuse, or bugs that can be deduced via static analysis.
-Clang-Tidy is modular and provides a convenient interface for writing new checks. % https://clang.llvm.org/extra/clang-tidy/
+Clang-Tidy is modular and provides a convenient interface for writing new checks. % http://clang.llvm.org/extra/clang-tidy/
 
-This tool can be found in the LLVM project repository. % https://github.com/llvm/llvm-project
+This tool can be found in the LLVM project repository. % http://github.com/llvm/llvm-project
 
 \section{Install guide}
 
@@ -63,14 +65,14 @@ Software requirements include (at least) GCC version 7.1.0, CMake version 3.13.4
 
 \subsection{Building from source}
 
-These commands will compile LLVM from source. The building process with parameters can be found on the README.md of
-LLVM project Github repository,\footnote{\url{https://github.com/llvm/llvm-project#readme} accessed 2022. 05. 03.}, or the Getting
-Started\footnote{\url{https://clang.llvm.org/get_started.html}, accessed 2022. 05. 03.} page of Clang documentation. These are the commands I used for
+These commands will compile LLVM from source. The building process with parameters can be found on the \texttt{README.md} of
+LLVM project Github repository,\footnote{\url{http://github.com/llvm/llvm-project\#readme} accessed 2022. 05. 03.} or the Getting
+Started\footnote{\url{http://clang.llvm.org/get_started.html}, accessed 2022. 05. 03.} page of Clang documentation. These are the commands I used for
 the compilation.
-% https://github.com/llvm/llvm-project#readme and https://clang.llvm.org/get_started.html
+% http://github.com/llvm/llvm-project#readme and http://clang.llvm.org/get_started.html
 
 \begin{lstlisting}[language={bash}]
-	git clone https://github.com/llvm/llvm-project.git
+	git clone http://github.com/llvm/llvm-project.git
 	cd llvm-project
 	mkdir Build
 

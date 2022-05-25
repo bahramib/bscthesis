@@ -1,3 +1,5 @@
+% ! TeX root = thesis_en.tex
+
 \chapter{Developer documentation}
 \label{ch:impl}
 
@@ -197,7 +199,7 @@ that we can see in the AST Matcher Reference~\cite{matcherref}. This tells us wh
 parameter, and what their return type is. It also gives us examples of usage.
 Theoretically, there are 3 distinct base types for AST nodes. \texttt{Decl} (declaration), \texttt{Stmt} (statement) and \texttt{Type}. In practice,
 Clang-Tidy has more distinct bases in its AST representation, but for now let us view a a simple example of matching from
-\texttt{Compiler Explorer}:\footnote{\url{https://godbolt.org/z/ncToe315q}, accessed 2022. 05. 14.}
+\texttt{Compiler Explorer}:\footnote{\url{http://godbolt.org/z/ncToe315q}, accessed 2022. 05. 14.}
 
 \begin{lstlisting}[language={C++},caption={A very simple code for matching function calls.},label={lst:matchercode}]
 int foo() { return 1; }
@@ -872,7 +874,7 @@ namespace HelloWorld
 
 A general Interval Branch and Bound algorithm is shown in Algorithm~\ref{alg:ibb}. An appropriate selection rule is applied
 in Step~\ref{step:selrule}.\\
-Source of example: \href{https://www.inf.u-szeged.hu/actacybernetica/}{Acta Cybernetica (this is a hyperlink)}.
+Source of example: \href{http://www.inf.u-szeged.hu/actacybernetica/}{Acta Cybernetica (this is a hyperlink)}.
 
 \begin{algorithm}[H]
 \caption{A general interval B\&B algorithm} 
