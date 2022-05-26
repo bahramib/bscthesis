@@ -147,13 +147,13 @@ structure of choice that is fit for the checker's logic.
 \subsection{PostCollect Function}
 
 \mintinline{CPP}{postCollect} receives a \mintinline{CPP}{StringRef}, the name of the output YAML file. In this function a checker should take all the data
-collected from the translation unit, from the data structure, and write it in a YAML file whose filename is the function parameter.
+collected from the translation unit, and thus the data structure, and write it in a YAML file whose filename is the function parameter.
 
 \subsection{Compact Function}
 
 \mintinline{CPP}{compact} has two parameters. One is a \mintinline{CPP}{StringRef} that, similarly to \mintinline{CPP}{postCollect}, contains the
 name of the output file.
-The other is a \mintinline{CPP}{vector<string>}s that contains all the YAML files in our multipass directory, that the
+The other is a \mintinline{CPP}{vector<string>} that contains all the YAML files in our multipass directory, that the
 current checker created in the collect phase and wrote the collection data into for each translation unit.
 In this phase, the checker should collect all the data from these YAML files and compact them into a single data structure. After
 this step, it should write it into the YAML file whose filename is the function parameter.
@@ -251,7 +251,7 @@ With \mintinline{CPP}{let Def functionDecl().bind("definition")} it will be save
 \mintinline{CPP}{let Call callExpr(callee( declRefExpr(to(Def)) )).bind("call")}, where we reuse our \mintinline{CPP}{Def}, we save our \mintinline{CPP}{Call} for later use. Now we only have
 to match for \mintinline{CPP}{Call} with \mintinline{CPP}{match Call} to get the same results.
 
-We could improve it this matcher for the checker, with not matching functions declared with \mintinline{CPP}{void} as return value.
+We could improve this matcher for the checker, with not matching functions declared with \mintinline{CPP}{void} as return value.
 In Clang-Tidy the "saved" matcher will be a
 \mintinline{CPP}{static const auto Call = callExpr(hasDeclaration(functionDecl(unless(returns(voidType())))));}. In reality, the
 checker will need more specification in order to work properly, but this distinction is important as well.

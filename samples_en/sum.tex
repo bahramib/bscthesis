@@ -8,7 +8,7 @@ actually modifying the source code of said unchecked return values. This solutio
 matching based static analysis library, however the statistical method would fail because of the way Clang-Tidy checkers work, separately
 for each translation unit. This leads to invalid statistics. In order to fix this, I have enhanced the infrastructure and created the
 option of multiphase analysis, that will collect the needed information per translation unit, accumulate these and make a project-level set
-of information, and finally emit diagnosis with this newly compacted information. The finished checker was accomplished using this new
+of information, and finally emit diagnostics with this newly compacted information. The finished checker was accomplished using this new
 infrastructure. This checker method can obviously run without the use of multiphase analysis, because the new infrastructure is made to be
 backwards compatible with the single phase mode, but the new infrastructure was vital for the statistics of the checker. This proved the
 checker to be an excellent example for the usage and utility of the multiphase mode.
